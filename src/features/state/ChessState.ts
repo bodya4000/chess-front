@@ -1,19 +1,26 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import Color from '../models/Color';
-import Figures from '../models/figures/Figures';
+import Board from '../models/board/Board';
+import Color from '../models/enums/Color';
+import Figures from '../models/enums/Figures';
 import King from '../models/figures/King';
 import Pawn from '../models/figures/Pawn';
-import MoveInfo from '../models/MoveInfo';
+import MoveInfo from '../models/value-objects/MoveInfo';
+import BoardRepository from '../repositories/BoardRepository';
 import BoardService from '../services/BoardService';
 import CheckmateAnalyzer from '../services/CheckmateAnalyzer';
+import MoveAnalyzer from '../services/MoveAnalyzer';
+import MoveEmulator from '../services/MoveEmulator';
 import { BoardView } from '../types/BoardView';
 import { CellView } from '../types/CellView';
-import GameHelper from '../utils/GameHelper';
-import { getEnPassantCapturedCell, isEnPassantMove } from '../utils/MoveHelper';
-import TypesHelper from '../utils/TypesHelper';
+import ChessHelper from '../utils/ChessHelper';
+import TypesHelper from '../utils/ModelsSerializer';
 
-const checkmateAnalyzer = CheckmateAnalyzer;
-const boardService = BoardService;
+// Setup dependencies
+const boardRepository = new BoardRepository();
+const moveAnalyzer = new MoveAnalyzer();
+const moveEmulator = new MoveEmulator(moveAnalyzer);
+const boardService = new BoardService(boardRepository, moveEmulator);
+const checkmateAnalyzer = new CheckmateAnalyzer(moveEmulator, moveAnalyzer);
 
 interface ChessState {
 	board: BoardView | null;
@@ -33,6 +40,24 @@ const initialState: ChessState = {
 	turn: Color.WHITE,
 };
 
+const updateTurn = (turn: Color): Color => (turn === Color.WHITE ? Color.BLACK : Color.WHITE);
+
+const handlePawnMove = (board: Board, figure: Pawn) => {
+	if (!figure.didAnyMove()) {
+		figure.justDidFirstMove();
+		board.setPawnThatJustDidTwoCellMove(figure);
+	}
+};
+
+const handleKingMove = (board: Board, figure: King) => {
+	if (!figure.didAnyMove()) figure.justDidFirstMove();
+	board.setPawnThatJustDidTwoCellMove(null);
+};
+
+const handleRegularMove = (board: Board) => {
+	board.setPawnThatJustDidTwoCellMove(null);
+};
+
 const chessSlice = createSlice({
 	name: 'chess',
 	initialState,
@@ -41,7 +66,8 @@ const chessSlice = createSlice({
 			const { row, col } = action.payload;
 			const board = boardService.getBoard();
 			const figure = board.getCell(row, col).getFigure();
-			if (figure != null) {				
+
+			if (figure) {
 				state.highlightedMoves = checkmateAnalyzer.getMovesWithoutCheck(board, figure).map(cell => TypesHelper.serializeCell(cell));
 				state.currentFigureCell = TypesHelper.serializeCell(board.getCell(row, col));
 				state.board = boardService.getSerializedBoard();
@@ -52,59 +78,57 @@ const chessSlice = createSlice({
 			const { row, col } = action.payload;
 			const board = boardService.getBoard();
 
-			if (state.currentFigureCell) {
-				const startFigureCell = board.getCell(state.currentFigureCell?.row, state.currentFigureCell?.col);
-				const moveTo = board.getCell(row, col);
-				let possibleOpponentFigure = moveTo.getFigure();
-				const figure = startFigureCell.getFigure();
-				if (figure != null) {
-					if (isEnPassantMove(figure, moveTo)) {
-						possibleOpponentFigure = getEnPassantCapturedCell(figure, moveTo)?.getFigure() ?? null;
-					}
-					GameHelper.emulateMove(figure, moveTo);
-					state.highlightedMoves = [];
-					state.turn = state.turn === Color.WHITE ? Color.BLACK : Color.WHITE;
-					board.setLastMove(new MoveInfo(figure, possibleOpponentFigure, startFigureCell, moveTo));
-					if (figure.getFigureName() == Figures.Pawn) {
-						const pawn = figure as Pawn;
-						if (!pawn.didAnyMove()) {
-							pawn.justDidFirstMove();
-							board.setPawnThatJustDidTwoCellMove(pawn);
-						}
-					} else if (figure.getFigureName() == Figures.King) {
-						const king = figure as King;
-						if (!king.didAnyMove()) king.justDidFirstMove();
-						board.setPawnThatJustDidTwoCellMove(null);
-					} else {
-						board.setPawnThatJustDidTwoCellMove(null);
-					}
-					state.board = boardService.getSerializedBoard();
-					if (checkmateAnalyzer.isCheck(board, figure.getOpponentColor())) {
-						if (checkmateAnalyzer.isMate(board, figure.getOpponentColor())) {
-							alert("mate!")
-						} else {
-							alert("check!")
-						}
-					}
-				}
+			if (!state.currentFigureCell) return;
+
+			const startFigureCell = board.getCell(state.currentFigureCell.row, state.currentFigureCell.col);
+			const moveTo = board.getCell(row, col);
+			const figure = startFigureCell.getFigure();
+
+			if (!figure) return;
+
+			let possibleOpponentFigure = moveTo.getFigure();
+			if (moveAnalyzer.isEnPassantMove(figure, moveTo)) {
+				possibleOpponentFigure = ChessHelper.getEnPassantCapturedCell(figure, moveTo)?.getFigure() ?? null;
+			}
+
+			boardService.emulateMove(figure, moveTo);
+			board.setLastMove(new MoveInfo(figure, possibleOpponentFigure, startFigureCell, moveTo));
+
+			switch (figure.getFigureName()) {
+				case Figures.Pawn:
+					handlePawnMove(board, figure as Pawn);
+					break;
+				case Figures.King:
+					handleKingMove(board, figure as King);
+					break;
+				default:
+					handleRegularMove(board);
+			}
+
+			state.highlightedMoves = [];
+			state.turn = updateTurn(state.turn);
+			state.board = boardService.getSerializedBoard();
+
+			if (checkmateAnalyzer.isCheck(board, figure.getOpponentColor())) {
+				state.isCheck = true;
+				state.isMate = checkmateAnalyzer.isMate(board, figure.getOpponentColor());
+				alert(state.isMate ? 'mate!' : 'check!');
 			}
 		},
 
 		revertMove(state) {
 			const board = boardService.getBoard();
 			const moveInfo = board.getLastMove();
-			console.debug(board.getLastMove());
 
-			if (moveInfo) {
-				const { movedFigure, capturedFigure, startCell, endCell } = moveInfo;
-				GameHelper.revertMove(movedFigure, endCell, startCell, capturedFigure);
-				state.turn = state.turn == Color.WHITE ? Color.BLACK : Color.WHITE;
-				state.board = boardService.getSerializedBoard();
-			}
+			if (!moveInfo) return;
+
+			const { figure, to, from, captured } = moveInfo;
+			boardService.revertMove(figure, to, from, captured);
+			state.turn = updateTurn(state.turn);
+			state.board = boardService.getSerializedBoard();
 		},
 	},
 });
 
 export const { getHighlightMoves, makeMove, revertMove } = chessSlice.actions;
-
 export default chessSlice.reducer;

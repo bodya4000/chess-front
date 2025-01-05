@@ -1,12 +1,22 @@
-import Board from '../models/Board';
-import Cell from '../models/Cell';
-import Color from '../models/Color';
+import Board from '../models/board/Board';
+import Cell from '../models/cell/Cell';
+import Color from '../models/enums/Color';
+import Figures from '../models/enums/Figures';
 import Figure from '../models/figures/Figure';
-import Figures from '../models/figures/Figures';
-import GameHelper from '../utils/GameHelper';
-import { getEnPassantCapturedCell, isEnPassantMove } from '../utils/MoveHelper';
+import BoardFinder from '../utils/BoardFinder';
+import ChessHelper from '../utils/ChessHelper'
+import MoveAnalyzer from './MoveAnalyzer';
+import MoveEmulator from './MoveEmulator';
 
 class CheckmateAnalyzer {
+	private moveEmulator: MoveEmulator;
+	private moveAnalyzer: MoveAnalyzer;
+
+	constructor(moveEmulator: MoveEmulator, moveAnalyzer: MoveAnalyzer) {
+		this.moveEmulator = moveEmulator;
+		this.moveAnalyzer = moveAnalyzer;
+	}
+
 	/**
 	 * Determines if the king of the specified color is in check.
 	 * @param board The game board.
@@ -15,7 +25,7 @@ class CheckmateAnalyzer {
 	 */
 	isCheck(board: Board, kingColor: Color): boolean {
 		const cells = board.getCells();
-		const kingCell = GameHelper.getKingCell(board, kingColor);
+		const kingCell = BoardFinder.getKingCell(board, kingColor);
 
 		for (const row of cells) {
 			for (const cell of row) {
@@ -35,7 +45,7 @@ class CheckmateAnalyzer {
 	 * @returns True if the king is in checkmate, otherwise false.
 	 */
 	isMate(board: Board, kingColor: Color): boolean {
-		const king = GameHelper.getKing(board, kingColor);
+		const king = BoardFinder.getKing(board, kingColor);
 		const kingMoves = this.getMovesWithoutCheck(board, king);
 
 		if (kingMoves.length > 0) {
@@ -68,19 +78,18 @@ class CheckmateAnalyzer {
 		return figureMoves.filter(cellToMove => {
 			const figureCellBeforeMove = figure.getCell();
 			let capturedFigure: Figure | null;
-			if (figure.getFigureName() === Figures.Pawn && isEnPassantMove(figure, cellToMove)) {
-				const capturedCell = getEnPassantCapturedCell(figure, cellToMove);
+			if (figure.getFigureName() === Figures.Pawn && this.moveAnalyzer.isEnPassantMove(figure, cellToMove)) {
+				const capturedCell = ChessHelper.getEnPassantCapturedCell(figure, cellToMove);
 				capturedFigure = capturedCell ? capturedCell?.getFigure() : null;
 			} else {
 				capturedFigure = cellToMove.getFigure();
 			}
-			GameHelper.emulateMove(figure, cellToMove);
+			this.moveEmulator.emulateMove(figure, cellToMove);
 			const isCheck = this.isCheck(board, figure.getColor());
-			console.log(isCheck);
-			GameHelper.revertMove(figure, cellToMove, figureCellBeforeMove, capturedFigure);
+			this.moveEmulator.revertMove(figure, cellToMove, figureCellBeforeMove, capturedFigure);
 			return !isCheck;
 		});
 	}
 }
 
-export default new CheckmateAnalyzer();
+export default CheckmateAnalyzer;

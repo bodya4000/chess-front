@@ -1,8 +1,8 @@
-import { isMoveAllowed, isWithinBounds } from '../../utils/MoveHelper';
-import Cell from '../Cell';
-import Color from '../Color';
+import MoveValidator from '../../utils/MoveValidator';
+import Cell from '../cell/Cell';
+import Color from '../enums/Color';
+import Figures from '../enums/Figures';
 import Figure from './Figure';
-import Figures from './Figures'
 
 abstract class LinearMovingFigure extends Figure {
 	constructor(cell: Cell, color: Color, figureName: Figures) {
@@ -22,13 +22,13 @@ abstract class LinearMovingFigure extends Figure {
 				targetRow += direction[0];
 				targetCol += direction[1];
 
-				if (!isWithinBounds(board, targetRow, targetCol)) {
+				if (!MoveValidator.isWithinBounds(board, targetRow, targetCol)) {
 					break;
 				}
 
 				const targetCell = board.getCell(targetRow, targetCol);
 
-				if (isMoveAllowed(targetCell, this.getColor())) {
+				if (MoveValidator.isMoveAllowed(targetCell, this.getColor())) {
 					figureMoves.push(targetCell);
 				}
 				if (targetCell.hasFigure()) {

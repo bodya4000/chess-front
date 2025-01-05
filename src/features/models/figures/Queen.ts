@@ -1,6 +1,6 @@
-import Cell from '../Cell';
-import Color from '../Color';
-import Figures from './Figures'
+import Cell from '../cell/Cell';
+import Color from '../enums/Color';
+import Figures from '../enums/Figures';
 import LinearMovingFigure from './LinearMovingFigure';
 
 class Queen extends LinearMovingFigure {

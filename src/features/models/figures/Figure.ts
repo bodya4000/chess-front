@@ -1,6 +1,6 @@
-import Cell from '../Cell';
-import Color from '../Color';
-import Figures from './Figures';
+import Cell from '../cell/Cell';
+import Color from '../enums/Color';
+import Figures from '../enums/Figures';
 
 abstract class Figure {
 	private cell: Cell;
@@ -32,7 +32,6 @@ abstract class Figure {
 	getFigureName(): Figures {
 		return this.figureName;
 	}
-
 
 	abstract getFigureMoves(): Cell[];
 }

@@ -11,12 +11,15 @@
 		"analyze": "react-scripts build && npx webpack-bundle-analyzer build/static/js/*.js"
 	},
 	"dependencies": {
+		"@react-three/drei": "^9.120.5",
+		"@react-three/fiber": "^8.17.10",
 		"@reduxjs/toolkit": "^2.5.0",
 		"axios": "^1.7.9",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"react-redux": "^9.2.0",
-		"sass": "^1.83.0"
+		"sass": "^1.83.0",
+		"three": "^0.172.0"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.17.0",

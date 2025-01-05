@@ -1,6 +1,3 @@
-import Board from '../../models/Board';
-import Cell from '../../models/Cell';
-import Color from '../../models/Color';
 import Bishop from '../../models/figures/Bishop';
 import Figure from '../../models/figures/Figure';
 import King from '../../models/figures/King';
@@ -8,6 +5,9 @@ import Knight from '../../models/figures/Knight';
 import Pawn from '../../models/figures/Pawn';
 import Queen from '../../models/figures/Queen';
 import Rook from '../../models/figures/Rook';
+import Cell from '../cell/Cell';
+import Color from '../enums/Color';
+import Board from './Board';
 
 class BoardFactory {
 	private static readonly BOARD_SIZE = 8;
@@ -62,12 +62,8 @@ class BoardFactory {
 		const cells = board.getCells();
 		this.fillRowWithFigures(cells[this.WHITE_HARD_FIGURES_ROW], Color.WHITE);
 		this.fillRowWithPawns(cells[this.WHITE_PAWNS_ROW], cell => new Pawn(cell, Color.WHITE));
-		
 		this.fillRowWithPawns(cells[this.BLACK_PAWNS_ROW], cell => new Pawn(cell, Color.BLACK));
 		this.fillRowWithFigures(cells[this.BLACK_HARD_FIGURES_ROW], Color.BLACK);
-
-		const debugCell = board.getCell(6, 2)
-		debugCell.setFigure(new Pawn(debugCell, Color.WHITE))
 	}
 
 	private static fillRowWithFigures(row: Cell[], color: Color): void {

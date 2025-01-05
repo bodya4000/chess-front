@@ -1,9 +1,9 @@
-import { isMoveAllowed, isWithinBounds } from '../../utils/MoveHelper';
-import Board from '../Board';
-import Cell from '../Cell';
-import Color from '../Color';
+import MoveValidator from '../../utils/MoveValidator'
+import Board from '../board/Board'
+import Cell from '../cell/Cell';
+import Color from '../enums/Color';
+import Figures from '../enums/Figures';
 import Figure from './Figure';
-import Figures from './Figures';
 
 class King extends Figure {
 	static MOVES: number[][] = [
@@ -40,10 +40,10 @@ class King extends Figure {
 			const targetRow = cell.getRowPos() + rowOffset;
 			const targetCol = cell.getColPos() + colOffset;
 
-			if (isWithinBounds(board, targetRow, targetCol)) {
+			if (MoveValidator.isWithinBounds(board, targetRow, targetCol)) {
 				const targetCell = board.getCell(targetRow, targetCol);
 
-				if (isMoveAllowed(targetCell, this.getColor())) {
+				if (MoveValidator.isMoveAllowed(targetCell, this.getColor())) {
 					figureMoves.push(targetCell);
 				}
 			}

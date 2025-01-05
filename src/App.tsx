@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux';
-import BoardComponent from './features/components/Board/BoardComponent';
+import ChessCanvas from './features/components/ChessCanvas/ChessCanvas';
 import { revertMove } from './features/state/ChessState';
 
 function App() {
@@ -9,8 +9,7 @@ function App() {
 	};
 	return (
 		<>
-			<BoardComponent />
-
+			<ChessCanvas />
 			<button onClick={revert}>revert</button>
 		</>
 	);

@@ -1,9 +1,9 @@
-import { isWithinBounds } from '../../utils/MoveHelper';
-import Board from '../Board';
-import Cell from '../Cell';
-import Color from '../Color';
+import MoveValidator from '../../utils/MoveValidator'
+import Board from '../board/Board'
+import Cell from '../cell/Cell';
+import Color from '../enums/Color';
+import Figures from '../enums/Figures';
 import Figure from './Figure';
-import Figures from './Figures';
 
 class Pawn extends Figure {
 	private isFirstMove: boolean = true;
@@ -36,14 +36,14 @@ class Pawn extends Figure {
 	}
 
 	private oneCellMove(figureMoves: Cell[], board: Board, rowPos: number, colPos: number) {
-		if (!isWithinBounds(board, rowPos + this.direction, colPos)) return;
+		if (!MoveValidator.isWithinBounds(board, rowPos + this.direction, colPos)) return;
 		const targetCell = board.getCell(rowPos + this.direction, colPos);
 		const valid = targetCell.noFigure();
 		if (valid) figureMoves.push(targetCell);
 	}
 
 	private twoCellMove(figureMoves: Cell[], board: Board, rowPos: number, colPos: number) {
-		if (!isWithinBounds(board, rowPos + this.direction * 2, colPos)) return;
+		if (!MoveValidator.isWithinBounds(board, rowPos + this.direction * 2, colPos)) return;
 		const targetCell = board.getCell(rowPos + this.direction * 2, colPos);
 		const valid = targetCell.noFigure() && this.isFirstMove && figureMoves.length > 0;
 		if (valid) figureMoves.push(targetCell);
@@ -51,14 +51,14 @@ class Pawn extends Figure {
 
 	private captureMove(figureMoves: Cell[], board: Board, rowPos: number, colPos: number, side: 'LEFT' | 'RIGHT') {
 		const horizontalPos = side === 'LEFT' ? colPos - 1 : colPos + 1;
-		if (!isWithinBounds(board, rowPos + this.direction, horizontalPos)) return;
+		if (!MoveValidator.isWithinBounds(board, rowPos + this.direction, horizontalPos)) return;
 		const targetCell = board.getCell(rowPos + this.direction, horizontalPos);
 		const targetValid = this.cellHasOpponentFigure(targetCell);
 		if (targetValid) figureMoves.push(targetCell);
 	}
 
 	private checkEnPassant(figureMoves: Cell[], board: Board, rowPos: number, colPos: number, direction: number) {
-		if (!isWithinBounds(board, rowPos + this.direction, colPos + direction)) return;
+		if (!MoveValidator.isWithinBounds(board, rowPos + this.direction, colPos + direction)) return;
 		const opponentCell = board.getCell(rowPos, colPos + direction);
 		const targetCell = board.getCell(rowPos + this.direction, colPos + direction);
 		const opponentFigure = opponentCell.getFigure();
@@ -71,8 +71,9 @@ class Pawn extends Figure {
 		}
 	}
 
-
-`
+	private cellHasOpponentFigure(cell: Cell | null): boolean {
+		return cell != null && cell.hasOpponentFigure(this.getColor());
+	}
 }
 
 export default Pawn;

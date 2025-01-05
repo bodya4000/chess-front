@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import useChess from '../../hooks/useChess';
-import Color from '../../models/Color';
+import Color from '../../models/enums/Color';
 import { getHighlightMoves } from '../../state/ChessState';
 
 interface FigureComponentProps {
@@ -24,7 +24,7 @@ const FigureComponent: FC<FigureComponentProps> = ({ figure, row, col }) => {
 	};
 
 	const onFigureClick = () => {
-		if (turn == figure.color ) {			
+		if (turn == figure.color) {
 			dispatch(getHighlightMoves({ row, col }));
 		}
 	};

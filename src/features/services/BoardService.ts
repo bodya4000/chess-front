@@ -1,32 +1,33 @@
-import Board from '../models/Board'
-import Cell from '../models/Cell'
-import Figure from '../models/figures/Figure'
-import BoardFactory from '../utils/factories/BoardFactory'
-import GameHelper from '../utils/GameHelper'
-import TypesHelper from '../utils/TypesHelper'
+import Cell from '../models/cell/Cell';
+import Figure from '../models/figures/Figure';
+import BoardRepository from '../repositories/BoardRepository';
+import ModelsSerializer from '../utils/ModelsSerializer';
+import MoveEmulator from './MoveEmulator';
 
 class BoardService {
-  private board: Board;
+	private boardRepository: BoardRepository;
+	private moveEmulator: MoveEmulator;
 
-  constructor() {
-    this.board = BoardFactory.initializeBoard();
-  }
+	constructor(boardRepository: BoardRepository, moveEmulator: MoveEmulator) {
+		this.boardRepository = boardRepository;
+		this.moveEmulator = moveEmulator;
+	}
 
-  getBoard() {
-    return this.board;
-  }
+	getBoard() {
+		return this.boardRepository.getBoard();
+	}
 
-  getSerializedBoard() {
-    return TypesHelper.serializeBoard(this.board);
-  }
+	getSerializedBoard() {
+		return ModelsSerializer.serializeBoard(this.getBoard());
+	}
 
-  makeMove(figure:Figure, targetCell:Cell) {
-    GameHelper.emulateMove(figure, targetCell);
-  }
+	emulateMove(figure: Figure, targetCell: Cell) {
+		this.moveEmulator.emulateMove(figure, targetCell);
+	}
 
-  revertMove(figure:Figure, currentCell:Cell, previousCell:Cell, capturedFigure:Figure | null) {
-    GameHelper.revertMove(figure, currentCell, previousCell, capturedFigure);
-  }
+	revertMove(figure: Figure, currentCell: Cell, previousCell: Cell, capturedFigure: Figure | null) {
+		this.moveEmulator.revertMove(figure, currentCell, previousCell, capturedFigure);
+	}
 }
 
-export default new BoardService;
+export default BoardService;

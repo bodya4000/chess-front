@@ -1,7 +1,7 @@
-import CellBuilder from '../utils/factories/builders/CellBuilder'
-import Board from './Board';
-import Color from './Color';
-import Figure from './figures/Figure';
+import Board from '../board/Board'
+import Color from '../enums/Color';
+import Figure from '../figures/Figure';
+import CellBuilder from './CellBuilder';
 
 class Cell {
 	private readonly rowPos: number;

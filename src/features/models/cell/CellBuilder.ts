@@ -1,7 +1,7 @@
-import Board from '../../../models/Board';
-import Cell from '../../../models/Cell';
-import Color from '../../../models/Color';
-import Figure from '../../../models/figures/Figure';
+import Color from '../enums/Color';
+import Figure from '../figures/Figure';
+import Board from '../models/Board';
+import Cell from './Cell';
 
 class CellBuilder {
 	private row: number | null = null;

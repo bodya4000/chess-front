@@ -1,6 +1,6 @@
-import Cell from './Cell';
-import Pawn from './figures/Pawn';
-import MoveInfo from './MoveInfo';
+import Cell from '../cell/Cell'
+import Pawn from '../figures/Pawn'
+import MoveInfo from '../value-objects/MoveInfo'
 
 class Board {
 	private cells: Cell[][] = [];
@@ -9,7 +9,7 @@ class Board {
 
 	constructor() {}
 
-	getLastMove() {
+	getLastMove() :MoveInfo | undefined {
 		return this.lastMove;
 	}
 	setLastMove(move: MoveInfo) {
