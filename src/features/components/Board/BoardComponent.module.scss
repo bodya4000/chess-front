@@ -1,0 +1,11 @@
+.board {
+	display: flex;
+	justify-content: center;
+	&_container {
+		border: 10px solid black;
+		display: inline-flex;
+		justify-content: center;
+		transform: rotate(-90deg);
+	}
+
+}
