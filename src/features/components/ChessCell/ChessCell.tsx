@@ -22,7 +22,7 @@ const ChessCell: FC<ChessCellProps> = ({ cell, highlighted, position }) => {
 		<mesh key={`${cell.row}-${cell.col}`} position={position}>
 			<boxGeometry args={[1.5, 0.35, 1.5]} />
 			<meshStandardMaterial color={cell.color} />
-			{cell.figure && <ChessFigure color={cell.figure.color} position={position} />}
+			{cell.figure && <ChessFigure figure={cell.figure.type} color={cell.figure.color} position={position} />}
 		</mesh>
 	);
 };

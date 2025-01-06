@@ -3,12 +3,12 @@ import { FC, useEffect } from 'react';
 import * as THREE from 'three';
 
 interface ChessFigureProps {
-	figure?: string;
+	figure: string;
 	color: string;
 	position: number[];
 }
 
-const ChessFigure: FC<ChessFigureProps> = ({ figure="pawn", color, position }) => {
+const ChessFigure: FC<ChessFigureProps> = ({ figure, color, position }) => {
 	const modelPaths: Record<string, string> = {
 		king: '/assets/models/king.glb',
 		queen: '/assets/models/queen.glb',
@@ -22,27 +22,36 @@ const ChessFigure: FC<ChessFigureProps> = ({ figure="pawn", color, position }) =
 	const clonedScene = gltf.scene.clone();
 
 	const scaleFactor = 500;
-	const scaleFactoredPosition = [position[0] / scaleFactor +0.1, position[1], position[2] / scaleFactor];
+	const scaleFactoredPosition = [position[0] / scaleFactor + 0.1, position[1], position[2] / scaleFactor];
 
 	useEffect(() => {
 		clonedScene.traverse(child => {
 			if (child instanceof THREE.Mesh) {
 				if (child.material instanceof THREE.MeshStandardMaterial) {
-					child.material = child.material.clone(); 
-					child.material.color.set(color === 'white' ? '#f8f4e3' : 'red');
+					child.material = child.material.clone();
+					if (child.geometry.attributes.position) {
+						const position = child.geometry.attributes.position;
+						position.needsUpdate = true;
+					}
+					child.material.color.set(color === 'white' ? 'rgba(255, 249, 230)' : '#737373');
+
+					child.material.metalness = 0.5; // Металевий ефект
+					child.material.roughness = 0.05; // Зменшення шорсткості
+					child.material.envMapIntensity = 1.2; // Інтенсивність освітлення
+
+					if (child.material.map) {
+						child.material.map.anisotropy = 16; // Підвищення анізотропії
+					}
 				}
 			}
 		});
+
+		if (color === 'black') {
+			clonedScene.rotation.set(0, Math.PI, 0); // Поворот чорних фігур
+		}
 	}, [clonedScene, color]);
 
-	return (
-		<primitive
-			object={clonedScene} 
-			scale={0.04}
-			position={scaleFactoredPosition}
-			castShadow
-		/>
-	);
+	return <primitive object={clonedScene} scale={1} position={scaleFactoredPosition} castShadow />;
 };
 
 export default ChessFigure;

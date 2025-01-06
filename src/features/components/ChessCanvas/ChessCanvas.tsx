@@ -8,8 +8,9 @@ const ChessCanvas: FC = () => {
 	return (
 		<div className={styles.canvas}>
 			<Canvas camera={{ position: [0, 5, 10], fov: 50 }}>
-				<ambientLight intensity={3} />
+				<ambientLight intensity={2} />
 				<pointLight position={[10, 10, 10]} />
+				<directionalLight position={[10, 10, 5]} intensity={2} castShadow />
 
 				<ChessBoard />
 				<OrbitControls
