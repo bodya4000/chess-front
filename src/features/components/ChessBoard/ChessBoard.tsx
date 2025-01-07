@@ -1,9 +1,9 @@
-import { FC } from 'react'
-import useChess from '../../hooks/useChess'
-import ChessCell from '../ChessCell/ChessCell'
+import { FC } from 'react';
+import useChess from '../../hooks/reduxSelelectors/useChess';
+import ChessCell from '../ChessCell/ChessCell';
 
 const ChessBoard: FC = () => {
-	const { board } = useChess();
+	const { board, oldBoard, highlightedMoves } = useChess();
 	const cells = board?.cells ?? null;
 	const cellSize = 1.5; // Size of each cell
 	const boardSize = cellSize * 8; // Total size of the board
@@ -15,7 +15,9 @@ const ChessBoard: FC = () => {
 		if (cells) {
 			for (let row = 0; row < cells.length; row++) {
 				for (let col = 0; col < cells[row].length; col++) {
-					squares.push(<ChessCell key={`${row}-${col}`} cell={cells[row][col]} position={[col * cellSize - (boardSize - cellSize) / 2, 0, row * cellSize - (boardSize - cellSize) / 2]} />);
+					const cellView = cells[row][col];
+					const isHighlighted = highlightedMoves.some(view => view.row == cellView.row && view.col == cellView.col);
+					squares.push(<ChessCell key={`${row}-${col}`} highlighted={isHighlighted} cell={cells[row][col]} position={[col * cellSize - (boardSize - cellSize) / 2, 0, row * cellSize - (boardSize - cellSize) / 2]} />);
 				}
 			}
 		}

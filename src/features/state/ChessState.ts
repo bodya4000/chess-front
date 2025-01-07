@@ -23,21 +23,25 @@ const boardService = new BoardService(boardRepository, moveEmulator);
 const checkmateAnalyzer = new CheckmateAnalyzer(moveEmulator, moveAnalyzer);
 
 interface ChessState {
+	oldBoard: BoardView | null;
 	board: BoardView | null;
 	isCheck: boolean;
 	isMate: boolean;
 	highlightedMoves: CellView[];
 	currentFigureCell: CellView | null;
 	turn: Color;
+	newPos: number[] | null;
 }
 
 const initialState: ChessState = {
-	board: boardService.getSerializedBoard() as BoardView,
+	board: boardService.getSerializedBoard(),
+	oldBoard: boardService.getSerializedBoard(),
 	isCheck: false,
 	isMate: false,
 	highlightedMoves: [],
 	currentFigureCell: null,
 	turn: Color.WHITE,
+	newPos: null,
 };
 
 const updateTurn = (turn: Color): Color => (turn === Color.WHITE ? Color.BLACK : Color.WHITE);
@@ -127,8 +131,16 @@ const chessSlice = createSlice({
 			state.turn = updateTurn(state.turn);
 			state.board = boardService.getSerializedBoard();
 		},
+
+		refreshBoard(state) {
+			state.oldBoard = state.board;
+		},
+
+		setNewPos(state, action: PayloadAction<number[] | null>) {
+			state.newPos = action.payload;
+		},
 	},
 });
 
-export const { getHighlightMoves, makeMove, revertMove } = chessSlice.actions;
+export const { getHighlightMoves, makeMove, revertMove,refreshBoard,setNewPos } = chessSlice.actions;
 export default chessSlice.reducer;

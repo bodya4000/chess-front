@@ -1,4 +1,4 @@
-import Board from '../models/board/Board'
+import Board from '../models/board/Board';
 import Cell from '../models/cell/Cell';
 import { BoardView } from '../types/BoardView';
 import { CellView } from '../types/CellView';
@@ -11,6 +11,7 @@ class ModelsSerializer {
 			color: cell.getColor(),
 			figure: cell.hasFigure()
 				? {
+						id: cell.getFigure()?.getId() ?? -1,
 						type: cell.getFigure()?.getFigureName()?.toString() ?? 'unknown',
 						color: cell.getFigure()?.getColor()?.toString() ?? 'unknown',
 				  }

@@ -11,6 +11,7 @@
 		"analyze": "react-scripts build && npx webpack-bundle-analyzer build/static/js/*.js"
 	},
 	"dependencies": {
+		"@react-spring/three": "^9.7.5",
 		"@react-three/drei": "^9.120.5",
 		"@react-three/fiber": "^8.17.10",
 		"@reduxjs/toolkit": "^2.5.0",

@@ -369,7 +369,7 @@
     "@react-spring/rafz" "~9.7.5"
     "@react-spring/types" "~9.7.5"
 
-"@react-spring/three@~9.7.5":
+"@react-spring/three@^9.7.5", "@react-spring/three@~9.7.5":
   version "9.7.5"
   resolved "https://registry.yarnpkg.com/@react-spring/three/-/three-9.7.5.tgz#46bcd22354afa873a809f1c6d7e07b59600b4d08"
   integrity sha512-RxIsCoQfUqOS3POmhVHa1wdWS0wyHAUway73uRLp3GAL5U2iYVNdnzQsep6M2NZ994BlW8TcKuMtQHUqOsy6WA==

@@ -28,9 +28,9 @@ class BoardFactory {
 			case 3:
 			case 6:
 				return new Bishop(cell, color);
-			case 4:
-				return new Queen(cell, color);
 			case 5:
+				return new Queen(cell, color);
+			case 4:
 				return new King(cell, color);
 			default:
 				throw new Error(`Invalid column position: ${colPos}`);

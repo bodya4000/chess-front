@@ -3,6 +3,8 @@ import Color from '../enums/Color';
 import Figures from '../enums/Figures';
 
 abstract class Figure {
+	private static idCount = 0
+	private id: number
 	private cell: Cell;
 	private figureName: Figures = Figures.Figure;
 	private color: Color;
@@ -11,6 +13,11 @@ abstract class Figure {
 		this.cell = cell;
 		this.color = color;
 		this.figureName = figureName;
+		this.id = Figure.idCount++
+	}
+
+	getId() {
+		return this.id
 	}
 
 	getCell() {

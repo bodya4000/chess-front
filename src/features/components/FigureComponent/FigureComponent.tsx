@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { useDispatch } from 'react-redux';
-import useChess from '../../hooks/useChess';
+import useChess from '../../hooks/reduxSelelectors/useChess';
 import Color from '../../models/enums/Color';
 import { getHighlightMoves } from '../../state/ChessState';
 
