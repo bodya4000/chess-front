@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import ChessReducer from './features/state/ChessState';
+import ChessReducer from './features/chess/state/ChessState';
 
 const store = configureStore({
 	reducer: {

@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux';
-import ChessCanvas from './features/components/ChessCanvas/ChessCanvas';
-import { revertMove } from './features/state/ChessState';
+import ChessCanvas from './features/chess/components/ChessCanvas/ChessCanvas';
+import { revertMove } from './features/chess/state/ChessState';
 
 function App() {
 	const dispatch = useDispatch();
