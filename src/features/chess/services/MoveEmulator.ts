@@ -30,13 +30,13 @@ class MoveEmulator {
 			console.log('en passant capture!');
 		}
 	}
-	private handleCastlingMove(figure: Figure, to: Cell) {
-		const lockingCells = ChessHelper.getCastlingRookTargetCells(figure);
+	private handleCastlingMove(king: Figure, to: Cell) {
+		const lockingCells = ChessHelper.getCastlingRookTargetCells(king);
 		if (lockingCells.includes(to)) {
-			to.setFigure(figure);
-			figure.setCell(to);
-			const newCellForRook = ChessHelper.getRookFinalCellAfterCastling(figure, to);
-			const rook = ChessHelper.getRookStartingCellBeforeCastling(figure).getFigure();
+			const newCellForRook = ChessHelper.getCellForCastlingRook(king, to);
+			const rook = ChessHelper.getRookOriginalCell(king, to).getFigure();
+			to.setFigure(king);
+			king.setCell(to);
 			if (rook) {
 				const rookCell = rook.getCell();
 				rookCell.setFigure(null);
@@ -78,18 +78,18 @@ class MoveEmulator {
 			currentFigureCell.setFigure(null);
 		}
 	}
-	private handleCastlingRevert(figureThatMadeMove: Figure, currentFigureCell: Cell, previousFigureCell: Cell) {
-		const rook = ChessHelper.getCastlingAssociatedRook(figureThatMadeMove);
+	private handleCastlingRevert(king: Figure, currentKingCell: Cell, previousKingCell: Cell) {
+		console.log('castling revert');
+		const rook = ChessHelper.getCastlingAssociatedRook(king);
 		if (rook) {
 			const rookCurrentCell = rook.getCell();
-			const rookOriginalCell = ChessHelper.getRookStartingCellBeforeCastling(figureThatMadeMove);
+			const rookOriginalCell = ChessHelper.getRookOriginalCell(king, currentKingCell);
 			rookCurrentCell.setFigure(null);
 			rookOriginalCell.setFigure(rook);
 			rook.setCell(rookOriginalCell);
-
-			previousFigureCell.setFigure(figureThatMadeMove);
-			figureThatMadeMove.setCell(previousFigureCell);
-			currentFigureCell.setFigure(null);
+			previousKingCell.setFigure(king);
+			king.setCell(previousKingCell);
+			currentKingCell.setFigure(null);
 		}
 	}
 	private handleDefaultMoveRevert(figureThatMadeMove: Figure, currentFigureCell: Cell, previousFigureCell: Cell, capturedFigure: Figure | null) {

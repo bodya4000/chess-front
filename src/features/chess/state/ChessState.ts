@@ -123,9 +123,7 @@ const chessSlice = createSlice({
 		revertMove(state) {
 			const board = boardService.getBoard();
 			const moveInfo = board.getLastMove();
-
 			if (!moveInfo) return;
-
 			const { figure, to, from, captured } = moveInfo;
 			boardService.revertMove(figure, to, from, captured);
 			state.turn = updateTurn(state.turn);

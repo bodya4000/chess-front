@@ -35,7 +35,7 @@ class BoardFinder {
 
 	static getDefaultKingCell(board: Board, color: Color) {
 		if (color == Color.WHITE) {
-			return board.getCell(0, 4);
+			return board.getCell(0, 3);
 		} else {
 			return board.getCell(7, 3);
 		}
