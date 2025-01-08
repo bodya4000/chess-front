@@ -1,9 +1,14 @@
-import ChessCanvas from './features/chess/components/ChessCanvas/ChessCanvas';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Home from './components/sceens/Home';
 
 function App() {
 	return (
 		<>
-			<ChessCanvas />
+			<BrowserRouter>
+				<Routes>
+					<Route path='/' element={<Home />} />
+				</Routes>
+			</BrowserRouter>
 		</>
 	);
 }

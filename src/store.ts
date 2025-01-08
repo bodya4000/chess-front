@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
-import ChessReducer from './features/chess/state/ChessState';
+import appReducer from './features/chess/state/AppSlice';
+import SingleChessBoardReducer from './features/chess/state/SingleChessBoardSlice';
 
 const store = configureStore({
 	reducer: {
-		chess: ChessReducer,
+		singleChessBoard: SingleChessBoardReducer,
+		app: appReducer,
 	},
 });
 

@@ -2,6 +2,20 @@
 	height: 100vh;
 	background: #242424;
 	position: relative;
+
+	&__opacity {
+		opacity: 0.5;
+	}
+
+	&__demo {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		height: 100vh;
+		background: rgba(0, 0, 0, 1);
+		z-index: 10;
+	}
 }
 
 .revert {
@@ -19,5 +33,4 @@
 	// position: absolute;
 	// top: 10%;
 	// left: 5%;
-
 }

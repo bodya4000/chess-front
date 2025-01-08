@@ -1,8 +1,8 @@
 import { FC } from 'react';
 import { useDispatch } from 'react-redux';
-import useChess from '../../hooks/reduxSelelectors/useChess';
+import useSingleChessBoard from '../../hooks/reduxSelelectors/useChess';
 import Color from '../../models/enums/Color';
-import { getHighlightMoves } from '../../state/ChessState';
+import { getHighlightMoves } from '../../state/SingleChessBoardSlice';
 
 interface FigureComponentProps {
 	figure?: { type: string; color: string } | null;
@@ -12,7 +12,7 @@ interface FigureComponentProps {
 
 const FigureComponent: FC<FigureComponentProps> = ({ figure, row, col }) => {
 	const dispatch = useDispatch();
-	const { turn } = useChess();
+	const { turn } = useSingleChessBoard();
 
 	if (!figure) {
 		return null;

@@ -24,7 +24,7 @@ const checkmateAnalyzer = new CheckmateAnalyzer(moveEmulator, moveAnalyzer);
 
 interface ChessState {
 	oldBoard: BoardView | null;
-	board: BoardView | null;
+	board: BoardView;
 	isCheck: boolean;
 	isMate: boolean;
 	highlightedMoves: CellView[];
@@ -62,7 +62,7 @@ const handleRegularMove = (board: Board) => {
 	board.setPawnThatJustDidTwoCellMove(null);
 };
 
-const chessSlice = createSlice({
+const singleChessBoardSlice = createSlice({
 	name: 'chess',
 	initialState,
 	reducers: {
@@ -70,7 +70,6 @@ const chessSlice = createSlice({
 			const { row, col } = action.payload;
 			const board = boardService.getBoard();
 			const figure = board.getCell(row, col).getFigure();
-
 			if (figure) {
 				state.highlightedMoves = checkmateAnalyzer.getMovesWithoutCheck(board, figure).map(cell => TypesHelper.serializeCell(cell));
 				state.currentFigureCell = TypesHelper.serializeCell(board.getCell(row, col));
@@ -140,5 +139,5 @@ const chessSlice = createSlice({
 	},
 });
 
-export const { getHighlightMoves, makeMove, revertMove,refreshBoard,setNewPos } = chessSlice.actions;
-export default chessSlice.reducer;
+export const { getHighlightMoves, makeMove, revertMove, refreshBoard, setNewPos } = singleChessBoardSlice.actions;
+export default singleChessBoardSlice.reducer;

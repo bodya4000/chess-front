@@ -1,11 +1,19 @@
-import { FC } from 'react';
-import useChess from '../../hooks/reduxSelelectors/useChess';
+import { FC, useEffect, useRef, useState } from 'react';
+import * as THREE from 'three';
+import ChessModes from '../../enums/ChessModes';
+import useApp from '../../hooks/reduxSelelectors/useApp';
+import { CellView } from '../../types/CellView';
 import ChessCell from '../ChessCell/ChessCell';
 
-const ChessBoard: FC = () => {
-	const { board, oldBoard, highlightedMoves } = useChess();
-	const cells = board?.cells ?? null;
-	const cellSize = 1.5; // Size of each cell
+interface DefaultChessBoardProps {
+	cells: CellView[][];
+	highlightedMoves: CellView[];
+	onCellClick?: (row: number, col: number) => void;
+	cellSize?: number;
+}
+
+const DefaultChessBoard: FC<DefaultChessBoardProps> = ({ cells, highlightedMoves, cellSize = 1.5 }) => {
+	const { mode } = useApp();
 	const boardSize = cellSize * 8; // Total size of the board
 	const borderThickness = 0.5; // Thickness of the border
 	const borderHeight = 0.6; // Height of the border
@@ -24,8 +32,24 @@ const ChessBoard: FC = () => {
 		return squares;
 	};
 
+	const groupRef = useRef<THREE.Group>(null);
+	const [rotation, setRotation] = useState(0);
+
+	useEffect(() => {
+		if (mode === ChessModes.DEMO) {
+			let frameId: number;
+			const animate = () => {
+				setRotation(prev => prev + 0.0025);
+				frameId = requestAnimationFrame(animate);
+			};
+			frameId = requestAnimationFrame(animate);
+
+			return () => cancelAnimationFrame(frameId);
+		}
+	}, [mode]);
+
 	return (
-		<group position={[0, 0, 0]}>
+		<group position={[0, 0, 0]} ref={groupRef} rotation={[0, rotation, 0]}>
 			{createChessBoard()}
 
 			{/* Borders */}
@@ -58,4 +82,4 @@ const ChessBoard: FC = () => {
 	);
 };
 
-export default ChessBoard;
+export default DefaultChessBoard;

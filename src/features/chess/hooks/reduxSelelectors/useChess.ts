@@ -1,8 +1,8 @@
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../store';
 
-const useChess = () => {
-	return useSelector((state: RootState) => state.chess);
+const useSingleChessBoard = () => {
+	return useSelector((state: RootState) => state.singleChessBoard);
 };
 
-export default useChess;
+export default useSingleChessBoard;

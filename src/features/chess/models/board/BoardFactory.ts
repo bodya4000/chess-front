@@ -1,7 +1,11 @@
+import { BoardView } from '../../types/BoardView'
+import ModelsSerializer from '../../utils/ModelsSerializer'
 import Cell from '../cell/Cell';
 import Color from '../enums/Color';
+import Bishop from '../figures/Bishop';
 import Figure from '../figures/Figure';
 import King from '../figures/King';
+import Knight from '../figures/Knight';
 import Pawn from '../figures/Pawn';
 import Queen from '../figures/Queen';
 import Rook from '../figures/Rook';
@@ -15,23 +19,24 @@ class BoardFactory {
 	private static readonly BLACK_HARD_FIGURES_ROW = 7;
 
 	private static readonly STARTING_FIGURE_PROVIDER = (cell: Cell, color: Color): Figure => {
-		const colPos = cell.getColPos()
+		const colPos = cell.getColPos();
 		switch (colPos) {
 			case 0:
 			case 7:
 				return new Rook(cell, color);
-			// case 1:
-			// case 6:
-			// 	return new Knight(cell, color);
-			// case 2:
-			// case 5:
-			// 	return new Bishop(cell, color);
-			// case 4:
-			// 	return new Queen(cell, color);
+			case 1:
+			case 6:
+				return new Knight(cell, color);
+			case 2:
+			case 5:
+				return new Bishop(cell, color);
+			case 4:
+				return new Queen(cell, color);
 			case 3:
 				return new King(cell, color);
 			default:
-				// console.error(`Invalid column position: ${colPos}`);
+				console.error(`Invalid column position: ${colPos}`);
+				throw new Error(`Invalid column position: ${colPos}`);
 		}
 	};
 
@@ -41,6 +46,10 @@ class BoardFactory {
 		board.setCells(cells);
 		this.fillBoardWithFigures(board);
 		return board;
+	}
+
+	public static initializeBoardView(): BoardView {
+		return ModelsSerializer.serializeBoard(this.initializeBoard())
 	}
 
 	private static createEmptyBoard(board: Board): Cell[][] {

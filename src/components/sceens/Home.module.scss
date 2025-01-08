@@ -1,0 +1,37 @@
+.user_welcome {
+	position: absolute;
+	z-index: 100;
+	background-color: rgb(10, 9, 9);
+	top: 40%;
+	left: 35%;
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	padding: 20px 30px;
+	gap: 1.5rem;
+
+	border-radius: 10px;
+
+	h1 {
+		font-weight: 600;
+		font-size: 2rem;
+		color: antiquewhite;
+	}
+}
+
+.btn_container {
+	display: flex;
+	justify-content: space-between;
+
+	button {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		text-align: center;
+		padding: 10px 15px;
+		background: antiquewhite;
+		color: black;
+		font-size: 1.5rem;
+		font-weight: 500;
+	}
+}

@@ -1,8 +1,8 @@
 import { SpringRef } from '@react-spring/three';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { setNewPos } from '../../state/ChessState';
 import { CellView } from '../../types/CellView';
+import { setNewPos } from '../../state/AppSlice'
 
 interface Props {
 	newPos: number[] | null;
