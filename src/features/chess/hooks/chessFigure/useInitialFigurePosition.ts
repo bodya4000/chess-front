@@ -1,8 +1,9 @@
 import { useSpring } from '@react-spring/three';
+import CoordinationPositionMapper from '../../utils/CoordinationPositionMapper';
 
 const useInitialFigurePosition = () => {
 	return useSpring(() => ({
-		position: [0, 0.2, 0],
+		position: CoordinationPositionMapper.getInit3DPosition(),
 		config: { mass: 1, tension: 170, friction: 26 },
 	}));
 };

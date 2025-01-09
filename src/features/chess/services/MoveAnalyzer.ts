@@ -76,9 +76,6 @@ class MoveAnalyzer {
 		const currentCell = king.getCell();
 		const defaultKingCell = BoardFinder.getDefaultKingCell(board, king.getColor());
 		const movedTwoColumns = Math.abs(currentCell.getColPos() - previousCell.getColPos()) === 2;
-		console.log(previousCell);
-		console.log(defaultKingCell);
-		console.log(movedTwoColumns);
 		return previousCell === defaultKingCell && movedTwoColumns;
 	}
 }

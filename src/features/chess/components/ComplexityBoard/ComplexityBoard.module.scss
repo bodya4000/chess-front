@@ -1,0 +1,43 @@
+.container {
+	position: absolute;
+	right: 20px;
+	top: 50px;
+	z-index: 10000;
+
+	h2 {
+		color: aliceblue;
+		font-weight: 600;
+		font-size: 1.5rem;
+		margin-bottom: 20px;
+	}
+}
+
+.radios {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 20px;
+	background-color: aquamarine;
+	border-radius: 10px;
+	padding: 10px 0;
+	align-items: center;
+}
+
+.radio {
+	width: 150px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 20px;
+	cursor: pointer;
+	padding: 5px;
+	border-bottom: 1px solid black;
+	label {
+		cursor: pointer;
+		margin-right: 20px;
+	}
+
+	&:hover {
+		box-shadow: 1px 1px 10px 0 black;
+	}
+}

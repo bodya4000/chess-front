@@ -3,7 +3,8 @@ import * as THREE from 'three';
 import ChessModes from '../../enums/ChessModes';
 import useApp from '../../hooks/reduxSelelectors/useApp';
 import { CellView } from '../../types/CellView';
-import ChessCell from '../ChessCell/ChessCell';
+import BotChessCell from '../ChessCells/BotChessCell';
+import SingleChessCell from '../ChessCells/SingleChessCell';
 
 interface DefaultChessBoardProps {
 	cells: CellView[][];
@@ -25,7 +26,12 @@ const DefaultChessBoard: FC<DefaultChessBoardProps> = ({ cells, highlightedMoves
 				for (let col = 0; col < cells[row].length; col++) {
 					const cellView = cells[row][col];
 					const isHighlighted = highlightedMoves.some(view => view.row == cellView.row && view.col == cellView.col);
-					squares.push(<ChessCell key={`${row}-${col}`} highlighted={isHighlighted} cell={cells[row][col]} position={[col * cellSize - (boardSize - cellSize) / 2, 0, row * cellSize - (boardSize - cellSize) / 2]} />);
+					if (mode == ChessModes.DEMO || mode == ChessModes.SINGLE) {
+						squares.push(<SingleChessCell key={`${row}-${col}`} highlighted={isHighlighted} cell={cells[row][col]} position={[col * cellSize - (boardSize - cellSize) / 2, 0, row * cellSize - (boardSize - cellSize) / 2]} />);
+					}
+					if (mode == ChessModes.BOT) {
+						squares.push(<BotChessCell key={`${row}-${col}`} highlighted={isHighlighted} cell={cells[row][col]} position={[col * cellSize - (boardSize - cellSize) / 2, 0, row * cellSize - (boardSize - cellSize) / 2]} />);
+					}
 				}
 			}
 		}

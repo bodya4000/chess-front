@@ -2,7 +2,7 @@ import { SpringRef } from '@react-spring/three';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { CellView } from '../../types/CellView';
-import { setNewPos } from '../../state/AppSlice'
+import { setNewPos } from '../../state/ChessGameSlice'
 
 interface Props {
 	newPos: number[] | null;

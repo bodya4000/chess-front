@@ -5,7 +5,7 @@ import useFigureQuality from '../../hooks/chessFigure/useFigureQuality';
 import useInitialFigurePosition from '../../hooks/chessFigure/useInitialFigurePosition';
 import useLoad3DFigureScene from '../../hooks/chessFigure/useLoad3DFigureScene';
 import useSaveFigurePosition from '../../hooks/chessFigure/useSaveFigurePosition';
-import useSingleChessBoard from '../../hooks/reduxSelelectors/useChess';
+import useChessGame from '../../hooks/reduxSelelectors/useChessGame';
 import { CellView } from '../../types/CellView';
 
 interface ChessFigureProps {
@@ -16,7 +16,7 @@ interface ChessFigureProps {
 }
 
 const ChessFigure: FC<ChessFigureProps> = ({ figure, color, id, figureCell }) => {
-	const { newPos } = useSingleChessBoard();
+	const { newPos } = useChessGame();
 	const { scene } = useLoad3DFigureScene(figure);
 	const [springProps, api] = useInitialFigurePosition();
 	useFigureQuality(scene, color);

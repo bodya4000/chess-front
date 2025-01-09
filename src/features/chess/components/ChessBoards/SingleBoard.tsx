@@ -1,9 +1,9 @@
 import { FC } from 'react';
-import useSingleChessBoard from '../../hooks/reduxSelelectors/useChess';
+import useChessGame from '../../hooks/reduxSelelectors/useChessGame';
 import DefaultChessBoard from './DefaultChessBoard';
 
 const SingleBoard: FC = () => {
-	const { board, highlightedMoves } = useSingleChessBoard();
+	const { board, highlightedMoves } = useChessGame();
 	return <DefaultChessBoard cells={board.cells} highlightedMoves={highlightedMoves} />;
 };
 

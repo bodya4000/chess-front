@@ -1,8 +1,10 @@
 import { FC } from 'react';
 import { useDispatch } from 'react-redux';
+import BotBoard from '../../features/chess/components/ChessBoards/BotBoard';
 import DemoBoard from '../../features/chess/components/ChessBoards/DemoBoard';
 import SingleBoard from '../../features/chess/components/ChessBoards/SingleBoard';
 import ChessCanvas from '../../features/chess/components/ChessCanvas/ChessCanvas';
+import ComplexityBoard from '../../features/chess/components/ComplexityBoard/ComplexityBoard';
 import ChessModes from '../../features/chess/enums/ChessModes';
 import useApp from '../../features/chess/hooks/reduxSelelectors/useApp';
 import { setMode } from '../../features/chess/state/AppSlice';
@@ -34,9 +36,12 @@ const Home: FC = () => {
 				</div>
 			)}
 
+			{/* {mode === ChessModes.BOT && <ComplexityBoard />} */}
+
 			<ChessCanvas>
 				{mode === ChessModes.DEMO && <DemoBoard />}
 				{mode === ChessModes.SINGLE && <SingleBoard />}
+				{mode === ChessModes.BOT && <BotBoard />}
 			</ChessCanvas>
 		</>
 	);

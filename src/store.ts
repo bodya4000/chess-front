@@ -1,10 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 import appReducer from './features/chess/state/AppSlice';
-import SingleChessBoardReducer from './features/chess/state/SingleChessBoardSlice';
+import BotChessBoardReducer from './features/chess/state/BotChessBoardSlice';
+import ChessGameReducer from './features/chess/state/ChessGameSlice';
 
 const store = configureStore({
 	reducer: {
-		singleChessBoard: SingleChessBoardReducer,
+		chessGame: ChessGameReducer,
+		botChessBoard: BotChessBoardReducer,
 		app: appReducer,
 	},
 });
