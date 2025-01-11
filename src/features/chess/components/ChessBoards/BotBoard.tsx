@@ -4,8 +4,8 @@ import useChessGame from '../../hooks/reduxSelelectors/useChessGame';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import Color from '../../models/enums/Color';
 import { getBotMove, setupColorsForUserAndBot } from '../../state/BotChessBoardSlice';
+import { completeMove } from '../../state/ChessGameSlice';
 import DefaultChessBoard from './DefaultChessBoard';
-import { completeMove } from '../../state/ChessGameSlice'
 
 const BotBoard: FC = () => {
 	const { botColor } = useBotChessBoard();
@@ -29,4 +29,3 @@ const BotBoard: FC = () => {
 };
 
 export default BotBoard;
-

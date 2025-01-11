@@ -42,7 +42,7 @@ const initialState: ChessState = {
  * @param {Coordinates} payload - Contains the starting and target cell coordinates of the move.
  * @param {object} thunkAPI - The Redux Toolkit `thunkAPI` object, used to dispatch actions.
  */
-export const finalizeMove = createAsyncThunk('chess/finalizeMove', async ({ figureCell, moveCell }: Coordinates, thunkAPI) => {
+export const completeMove = createAsyncThunk('chess/completeMove', async ({ figureCell, moveCell }: Coordinates, thunkAPI) => {
 	const board = boardService.getBoard();
 	const from = board.getCell(figureCell.row, figureCell.col);
 	const to = board.getCell(moveCell.row, moveCell.col);
