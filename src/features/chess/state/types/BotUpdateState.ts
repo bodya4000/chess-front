@@ -1,10 +1,13 @@
 import Color from '../../models/enums/Color';
 import { BoardView } from '../../types/BoardView';
+import { CellView } from '../../types/CellView';
 
 export type BotUpdateState = {
-	highlightedMoves: [];
-	turn: Color;
-	board: BoardView;
-	isCheck: boolean;
-	isMate: boolean;
+	board?: BoardView;
+	isCheck?: boolean;
+	isMate?: boolean;
+	highlightedMoves?: CellView[];
+	currentFigureCell?: CellView | null;
+	turn?: Color;
+	newPos?: number[] | null;
 };

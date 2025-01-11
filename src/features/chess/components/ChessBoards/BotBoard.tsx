@@ -3,8 +3,9 @@ import useBotChessBoard from '../../hooks/reduxSelelectors/useBotChessBoard';
 import useChessGame from '../../hooks/reduxSelelectors/useChessGame';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import Color from '../../models/enums/Color';
-import { completeBotMove, getBotMove, setupColorsForUserAndBot } from '../../state/BotChessBoardSlice';
+import { getBotMove, setupColorsForUserAndBot } from '../../state/BotChessBoardSlice';
 import DefaultChessBoard from './DefaultChessBoard';
+import { completeMove } from '../../state/ChessGameSlice'
 
 const BotBoard: FC = () => {
 	const { botColor } = useBotChessBoard();
@@ -19,7 +20,7 @@ const BotBoard: FC = () => {
 		if (botColor == Color.WHITE) {
 			dispatch(getBotMove()).then(result => {
 				if (result.payload) {
-					dispatch(completeBotMove(result.payload));
+					dispatch(completeMove(result.payload));
 				}
 			});
 		}

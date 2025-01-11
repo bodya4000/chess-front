@@ -6,6 +6,7 @@
 	left: 35%;
 	display: flex;
 	justify-content: center;
+	align-items: center;
 	flex-direction: column;
 	padding: 20px 30px;
 	gap: 1.5rem;
@@ -16,13 +17,14 @@
 		font-weight: 600;
 		font-size: 2rem;
 		color: antiquewhite;
+		text-align: center;
 	}
 }
 
 .btn_container {
 	display: flex;
 	justify-content: space-between;
-
+	gap: 10px;
 	button {
 		display: flex;
 		justify-content: center;

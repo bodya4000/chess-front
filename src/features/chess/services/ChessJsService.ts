@@ -1,5 +1,6 @@
 import { Chess } from 'chess.js';
-import CoordinationMapper from '../utils/CoordinationPositionMapper';
+import { Coordinates } from '../types/Coordinates';
+import CoordinationPositionMapper from '../utils/CoordinationPositionMapper';
 import BoardService from './BoardService';
 import StockfishService from './StockfishService';
 
@@ -34,20 +35,11 @@ class ChessJsService {
 		console.log(this.chessGame.ascii());
 	}
 
-	private handleBestMove(message: string) {
+	private handleBestMove(message: string): Coordinates | void {
 		const [_, bestMove] = message.split(' ');
 		console.log('BEST MOVE!!!:: ', bestMove);
 		if (!bestMove) return;
-		const startSquare = bestMove.slice(0, 2);
-		const endSquare = bestMove.slice(2, 4);
-
-		const startPos = CoordinationMapper.mapStringCoordinatesToMatrix(startSquare);
-		const endPos = CoordinationMapper.mapStringCoordinatesToMatrix(endSquare);
-		
-		const board = this.boardService.getBoard();
-		const figureCell = board.getCell(startPos.row, startPos.col);
-		const moveCell = board.getCell(endPos.row, endPos.col);
-		return { figureCell: { row: figureCell.getRowPos(), col: figureCell.getColPos() }, moveCell: { row: moveCell.getRowPos(), col: moveCell.getColPos() } };
+		return CoordinationPositionMapper.parseStringMoveToCells(bestMove);
 	}
 
 	/**
@@ -55,9 +47,10 @@ class ChessJsService {
 	 * @param start - Starting position of the move (row and column).
 	 * @param end - Ending position of the move (row and column).
 	 */
-	userMakesMove(start: { row: number; col: number }, end: { row: number; col: number }): void {
-		const startMove = CoordinationMapper.matrixToStringCoordinates(start);
-		const endMove = CoordinationMapper.matrixToStringCoordinates(end);
+	userMakesMove(coordinates: Coordinates): void {
+		const { figureCell, moveCell } = coordinates;
+		const startMove = CoordinationPositionMapper.matrixToStringCoordinates(figureCell);
+		const endMove = CoordinationPositionMapper.matrixToStringCoordinates(moveCell);
 
 		if (startMove && endMove) {
 			const move = `${startMove}${endMove}`;
@@ -69,7 +62,7 @@ class ChessJsService {
 	/**
 	 * Executes the bot's move by analyzing the current position and invoking Stockfish.
 	 */
-	async botMakesMove() {
+	async botMakesMove(): Promise<void | Coordinates> {
 		const fen = this.chessGame.fen();
 		const message = await this.engine.getBotMove(fen, this.depth);
 		const data = message.data;

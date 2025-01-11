@@ -1,3 +1,5 @@
+import { Coordinates } from '../types/Coordinates';
+
 class CoordinationPositionMapper {
 	private static readonly rowMapping: Record<string, number> = {
 		'1': 0,
@@ -91,12 +93,28 @@ class CoordinationPositionMapper {
 		return '';
 	}
 
-	public static get3DPositionMove(start: { row: number; col: number }, end: { row: number; col: number }, cellSize: number = 1.5): number[] {
-		return [(end.col - start.col) * cellSize, 0.2, (end.row - start.row) * cellSize];
+	public static get3DPositionMove(coordinates: Coordinates, cellSize: number = 1.5): number[] {
+		const {figureCell, moveCell} = coordinates
+		return [(moveCell.col - figureCell.col) * cellSize, 0.2, (moveCell.row - figureCell.row) * cellSize];
 	}
 
 	public static getInit3DPosition(): number[] {
 		return [0, 0.2, 0];
+	}
+
+	public static parseStringMoveToCells(move: string): Coordinates {
+		const startSquare = move.slice(0, 2);
+		const endSquare = move.slice(2, 4);
+		const startPos = CoordinationPositionMapper.mapStringCoordinatesToMatrix(startSquare);
+		const endPos = CoordinationPositionMapper.mapStringCoordinatesToMatrix(endSquare);
+		return { figureCell: { row: startPos.row, col: startPos.col }, moveCell: { row: endPos.row, col: endPos.col } };
+	}
+
+	public static parseCellsMoveToString(coordinates: Coordinates): string {
+		const { figureCell, moveCell } = coordinates;
+		const startPos = CoordinationPositionMapper.matrixToStringCoordinates(figureCell);
+		const endPos = CoordinationPositionMapper.matrixToStringCoordinates(moveCell);
+		return `${startPos}${endPos}`;
 	}
 }
 

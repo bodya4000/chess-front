@@ -1,14 +1,15 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import Color from '../models/enums/Color';
-import { boardService, checkmateAnalyzer, chessJsService, moveAnalyzer } from '../services/services';
+import { boardService, checkmateAnalyzer } from '../services/services';
 import { BoardView } from '../types/BoardView';
 import { CellView } from '../types/CellView';
-import ChessHelper from '../utils/ChessHelper';
+import { Coordinates } from '../types/Coordinates';
+import ChessLogic from '../utils/ChessLogic';
 import TypesHelper from '../utils/ModelsSerializer';
 import { BotUpdateState } from './types/BotUpdateState';
-import ChessLogic from './utils/ChessLogic';
+import { updateTurn } from './utils/helpers';
 
-interface ChessState {
+export interface ChessState {
 	board: BoardView;
 	isCheck: boolean;
 	isMate: boolean;
@@ -28,7 +29,31 @@ const initialState: ChessState = {
 	newPos: null,
 };
 
-const updateTurn = (turn: Color): Color => (turn === Color.WHITE ? Color.BLACK : Color.WHITE);
+/**
+ * Handles the completion of a move triggered by a bot or an online player.
+ * This method assumes the move has already been validated on the bot or player's side,
+ * so it skips local validation and directly updates the game state.
+ *
+ * Workflow:
+ * - Retrieves the board and the cells involved in the move (`from` and `to`).
+ * - Processes the move logic using `ChessLogic.processGameStateForFigureMove`.
+ * - Dispatches the updated game state to Redux.
+ *
+ * @param {Coordinates} payload - Contains the starting and target cell coordinates of the move.
+ * @param {object} thunkAPI - The Redux Toolkit `thunkAPI` object, used to dispatch actions.
+ */
+export const finalizeMove = createAsyncThunk('chess/finalizeMove', async ({ figureCell, moveCell }: Coordinates, thunkAPI) => {
+	const board = boardService.getBoard();
+	const from = board.getCell(figureCell.row, figureCell.col);
+	const to = board.getCell(moveCell.row, moveCell.col);
+	const figure = from.getFigure();
+
+	if (figure) {
+		ChessLogic.processGameStateForFigureMove(board, from, to, figure, figure.getColor(), (newState: Partial<ChessState>) => {
+			thunkAPI.dispatch(updateGameState(newState as BotUpdateState));
+		});
+	}
+});
 
 const chessGameSlice = createSlice({
 	name: 'chess',
@@ -49,20 +74,15 @@ const chessGameSlice = createSlice({
 			const { row, col } = action.payload;
 			const board = boardService.getBoard();
 			if (!state.currentFigureCell) return;
-			const startFigureCell = board.getCell(state.currentFigureCell.row, state.currentFigureCell.col);
-			const moveTo = board.getCell(row, col);
-			const figure = startFigureCell.getFigure();
-			if (!figure) return;
-			let possibleOpponentFigure = moveTo.getFigure();
-			if (moveAnalyzer.isEnPassantMove(figure, moveTo)) {
-				possibleOpponentFigure = ChessHelper.getEnPassantCapturedCell(figure, moveTo)?.getFigure() ?? null;
+
+			const from = board.getCell(state.currentFigureCell.row, state.currentFigureCell.col);
+			const to = board.getCell(row, col);
+			const figure = from.getFigure();
+			if (figure) {
+				ChessLogic.processGameStateForFigureMove(board, from, to, figure, state.turn, (newState: Partial<ChessState>) => {
+					Object.assign(state, newState);
+				});
 			}
-			chessJsService.userMakesMove({ row: state.currentFigureCell.row, col: state.currentFigureCell.col }, { row, col });
-			ChessLogic.handleFigureMove(board, figure, startFigureCell, moveTo, possibleOpponentFigure);
-			state.highlightedMoves = [];
-			state.board = boardService.getSerializedBoard();
-			state.turn = updateTurn(state.turn);
-			ChessLogic.checkForCheckmate(board, figure, state);
 		},
 
 		revertMove(state) {
@@ -84,12 +104,7 @@ const chessGameSlice = createSlice({
 		},
 
 		updateGameState(state, action: PayloadAction<BotUpdateState>) {
-			const { board, highlightedMoves, turn, isCheck, isMate } = action.payload;
-			state.board = board;
-			state.highlightedMoves = highlightedMoves;
-			state.turn = turn;
-			state.isCheck = isCheck;
-			state.isMate = isMate;
+			return { ...state, ...action.payload };
 		},
 	},
 });

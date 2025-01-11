@@ -2,10 +2,11 @@ import { FC } from 'react';
 import useBotChessBoard from '../../hooks/reduxSelelectors/useBotChessBoard';
 import useChessGame from '../../hooks/reduxSelelectors/useChessGame';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
-import { completeBotMove, getBotMove } from '../../state/BotChessBoardSlice';
-import { getHighlightMoves, makeMove, setNewPos } from '../../state/ChessGameSlice';
+import { getBotMove } from '../../state/BotChessBoardSlice';
+import { completeMove, getHighlightMoves } from '../../state/ChessGameSlice';
 import { CellView } from '../../types/CellView';
-import CoordinationPositionMapper from '../../utils/CoordinationPositionMapper';
+import ChessLogic from '../../utils/ChessLogic';
+import { debounce } from '../../utils/Functions';
 import DefaultChessCell from './DefaultChessCell';
 
 interface ChessCellProps {
@@ -20,26 +21,18 @@ const BotChessCell: FC<ChessCellProps> = ({ cell, highlighted, position }) => {
 	const { turn, currentFigureCell } = useChessGame();
 
 	const move = () => {
-		if (highlighted && currentFigureCell) {
-			const { row, col } = cell;
-			const targetPosition: number[] = CoordinationPositionMapper.get3DPositionMove({ row: currentFigureCell.row, col: currentFigureCell.col }, { row, col });
-			dispatch(setNewPos(targetPosition));
-			setTimeout(() => {
-				dispatch(makeMove({ row, col }));
-				dispatch(setNewPos(null));
-			}, 300);
-		}
+		ChessLogic.handleUIStateForFigureMove(highlighted, currentFigureCell, cell, dispatch);
+		debounce(() => {
+			dispatch(getBotMove()).then(result => result.payload && debounce(() => dispatch(completeMove(result.payload))));
+		});
 	};
 
 	const onClick = () => {
 		if (turn === userColor) {
 			if (turn === cell.figure?.color) {
 				dispatch(getHighlightMoves({ row: cell.row, col: cell.col }));
-			} else if (highlighted) {
+			} else if (currentFigureCell && highlighted) {
 				move();
-				setTimeout(() => {
-					dispatch(getBotMove()).then(result => result.payload && setTimeout(() => dispatch(completeBotMove(result.payload)), 300));
-				}, 300);
 			}
 		}
 	};

@@ -1,11 +1,12 @@
 import { FC } from 'react';
 import { useDispatch } from 'react-redux';
-import ChessModes from '../../enums/ChessModes';
-import useApp from '../../hooks/reduxSelelectors/useApp';
 import useChessGame from '../../hooks/reduxSelelectors/useChessGame';
+import useOnlineChessBoard from '../../hooks/reduxSelelectors/useOnlineChessBoard';
+import { playerConnectionService } from '../../services/services';
 import { getHighlightMoves } from '../../state/ChessGameSlice';
 import { CellView } from '../../types/CellView';
 import ChessLogic from '../../utils/ChessLogic';
+import CoordinationPositionMapper from '../../utils/CoordinationPositionMapper';
 import DefaultChessCell from './DefaultChessCell';
 
 interface ChessCellProps {
@@ -14,16 +15,21 @@ interface ChessCellProps {
 	position: [number, number, number];
 }
 
-const SingleChessCell: FC<ChessCellProps> = ({ cell, highlighted, position }) => {
+const OnlineChessCell: FC<ChessCellProps> = ({ cell, highlighted, position }) => {
 	const dispatch = useDispatch();
-	const { mode } = useApp();
 	const { turn, currentFigureCell } = useChessGame();
+	const { userColor, opponentSession } = useOnlineChessBoard();
 	const move = () => {
 		ChessLogic.handleUIStateForFigureMove(highlighted, currentFigureCell, cell, dispatch);
+		if (highlighted && currentFigureCell) {
+			const move = CoordinationPositionMapper.parseCellsMoveToString({ figureCell: { row: currentFigureCell.row, col: currentFigureCell.col }, moveCell: { row: cell.row, col: cell.col } });
+			console.log(`move: ${move}`);
+			playerConnectionService.publish(`/app/player/move/${opponentSession}`, JSON.stringify({ move }));
+		}
 	};
 
 	const onClick = () => {
-		if (mode == ChessModes.SINGLE) {
+		if (turn == userColor) {
 			if (turn === cell.figure?.color) {
 				dispatch(getHighlightMoves({ row: cell.row, col: cell.col }));
 			} else if (currentFigureCell && highlighted) {
@@ -35,4 +41,4 @@ const SingleChessCell: FC<ChessCellProps> = ({ cell, highlighted, position }) =>
 	return <DefaultChessCell onClick={onClick} cell={cell} currentFigureCell={currentFigureCell} highlighted={highlighted} position={position} />;
 };
 
-export default SingleChessCell;
+export default OnlineChessCell;

@@ -1,9 +1,11 @@
-import { FC, useEffect, useRef, useState } from 'react';
-import * as THREE from 'three';
+import { FC, useMemo } from 'react';
+import useBoardAnimation from '../../../../components/hooks/useBoardAnimation';
 import ChessModes from '../../enums/ChessModes';
 import useApp from '../../hooks/reduxSelelectors/useApp';
 import { CellView } from '../../types/CellView';
 import BotChessCell from '../ChessCells/BotChessCell';
+import DemoChessCell from '../ChessCells/DemoChessCell';
+import OnlineChessCell from '../ChessCells/OnlineChessCell';
 import SingleChessCell from '../ChessCells/SingleChessCell';
 
 interface DefaultChessBoardProps {
@@ -15,9 +17,9 @@ interface DefaultChessBoardProps {
 
 const DefaultChessBoard: FC<DefaultChessBoardProps> = ({ cells, highlightedMoves, cellSize = 1.5 }) => {
 	const { mode } = useApp();
-	const boardSize = cellSize * 8; // Total size of the board
-	const borderThickness = 0.5; // Thickness of the border
-	const borderHeight = 0.6; // Height of the border
+	const boardSize = useMemo(() => cellSize * 8, [cellSize]);
+	const borderThickness = useMemo(() => 0.5, []);
+	const borderHeight = useMemo(() => 0.6, []);
 
 	const createChessBoard = () => {
 		const squares = [];
@@ -26,11 +28,24 @@ const DefaultChessBoard: FC<DefaultChessBoardProps> = ({ cells, highlightedMoves
 				for (let col = 0; col < cells[row].length; col++) {
 					const cellView = cells[row][col];
 					const isHighlighted = highlightedMoves.some(view => view.row == cellView.row && view.col == cellView.col);
-					if (mode == ChessModes.DEMO || mode == ChessModes.SINGLE) {
-						squares.push(<SingleChessCell key={`${row}-${col}`} highlighted={isHighlighted} cell={cells[row][col]} position={[col * cellSize - (boardSize - cellSize) / 2, 0, row * cellSize - (boardSize - cellSize) / 2]} />);
-					}
-					if (mode == ChessModes.BOT) {
-						squares.push(<BotChessCell key={`${row}-${col}`} highlighted={isHighlighted} cell={cells[row][col]} position={[col * cellSize - (boardSize - cellSize) / 2, 0, row * cellSize - (boardSize - cellSize) / 2]} />);
+
+					switch (mode) {
+						case ChessModes.DEMO: {
+							squares.push(<DemoChessCell key={`${row}-${col}`} cell={cells[row][col]} position={[col * cellSize - (boardSize - cellSize) / 2, 0, row * cellSize - (boardSize - cellSize) / 2]} />);
+							break;
+						}
+						case ChessModes.SINGLE: {
+							squares.push(<SingleChessCell key={`${row}-${col}`} highlighted={isHighlighted} cell={cells[row][col]} position={[col * cellSize - (boardSize - cellSize) / 2, 0, row * cellSize - (boardSize - cellSize) / 2]} />);
+							break;
+						}
+						case ChessModes.BOT: {
+							squares.push(<BotChessCell key={`${row}-${col}`} highlighted={isHighlighted} cell={cells[row][col]} position={[col * cellSize - (boardSize - cellSize) / 2, 0, row * cellSize - (boardSize - cellSize) / 2]} />);
+							break;
+						}
+						case ChessModes.ONLINE: {
+							squares.push(<OnlineChessCell key={`${row}-${col}`} highlighted={isHighlighted} cell={cells[row][col]} position={[col * cellSize - (boardSize - cellSize) / 2, 0, row * cellSize - (boardSize - cellSize) / 2]} />);
+							break;
+						}
 					}
 				}
 			}
@@ -38,24 +53,10 @@ const DefaultChessBoard: FC<DefaultChessBoardProps> = ({ cells, highlightedMoves
 		return squares;
 	};
 
-	const groupRef = useRef<THREE.Group>(null);
-	const [rotation, setRotation] = useState(0);
-
-	useEffect(() => {
-		if (mode === ChessModes.DEMO) {
-			let frameId: number;
-			const animate = () => {
-				setRotation(prev => prev + 0.0025);
-				frameId = requestAnimationFrame(animate);
-			};
-			frameId = requestAnimationFrame(animate);
-
-			return () => cancelAnimationFrame(frameId);
-		}
-	}, [mode]);
+	const { rotation } = useBoardAnimation(mode);
 
 	return (
-		<group position={[0, 0, 0]} ref={groupRef} rotation={[0, rotation, 0]}>
+		<group position={[0, 0, 0]} rotation={[0, rotation, 0]}>
 			{createChessBoard()}
 
 			{/* Borders */}
