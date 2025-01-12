@@ -20,7 +20,6 @@ const DefaultChessBoard: FC<DefaultChessBoardProps> = ({ cells, highlightedMoves
 	const boardSize = useMemo(() => cellSize * 8, [cellSize]);
 	const borderThickness = useMemo(() => 0.5, []);
 	const borderHeight = useMemo(() => 0.6, []);
-
 	const createChessBoard = () => {
 		const squares = [];
 		if (cells) {

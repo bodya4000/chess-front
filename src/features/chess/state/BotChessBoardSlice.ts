@@ -20,12 +20,13 @@ const initialState: BotChessState = {
 export const getBotMove = createAsyncThunk('botChess/getBotMove', async (_, thunkAPI) => {
 	const response = await chessJsService.botMakesMove();
 	if (response) {
-		const { figureCell, moveCell } = response;
+		const { coordinates } = response;
+		const { figureCell, moveCell } = coordinates;
 		const targetPosition: number[] = CoordinationPositionMapper.get3DPositionMove({ figureCell: { row: figureCell.row, col: figureCell.col }, moveCell: { row: moveCell.row, col: moveCell.col } });
 		const currentFigureCellView = ModelsSerializer.serializeCell(boardService.getBoard().getCell(figureCell.row, figureCell.col));
 		thunkAPI.dispatch(setCurrentFigureCell(currentFigureCellView));
 		thunkAPI.dispatch(setNewPos(targetPosition));
-		return { figureCell, moveCell };
+		return response;
 	}
 });
 

@@ -8,10 +8,9 @@ import King from '../models/figures/King';
 import Pawn from '../models/figures/Pawn';
 import MoveInfo from '../models/value-objects/MoveInfo';
 import { boardService, checkmateAnalyzer, moveAnalyzer } from '../services/services';
-import { ChessState, makeMove, setNewPos } from '../state/ChessGameSlice';
+import { ChessState, makeMove, setNewPos, setPawnPromotionInfo } from '../state/ChessGameSlice';
 import { updateTurn } from '../state/utils/helpers';
 import { CellView } from '../types/CellView';
-import { Coordinates } from '../types/Coordinates';
 import ChessHelper from './ChessHelper';
 import CoordinationPositionMapper from './CoordinationPositionMapper';
 import { debounce } from './Functions';
@@ -71,19 +70,35 @@ class ChessLogic {
 	static handleUIStateForFigureMove(highlighted: boolean | undefined, currentFigureCell: CellView | null, cell: CellView, dispatch: Dispatch) {
 		if (highlighted && currentFigureCell) {
 			const { row, col } = cell;
-			const targetPosition: number[] = CoordinationPositionMapper.get3DPositionMove({
+			const coordinates = {
 				figureCell: { row: currentFigureCell.row, col: currentFigureCell.col },
 				moveCell: { row, col },
-			} as Coordinates);
-
+			};
+			const targetPosition: number[] = CoordinationPositionMapper.get3DPositionMove(coordinates);
 			dispatch(setNewPos(targetPosition));
+
+			if (currentFigureCell.figure?.type == Figures.Pawn) {
+				if (row == 0 || row == 7) {
+					const pawnColor = row == 0 ? Color.BLACK : Color.WHITE;
+					dispatch(
+						setPawnPromotionInfo({
+							col,
+							row,
+							color: pawnColor,
+							figure: null,
+							fromCoordinates: coordinates,
+						})
+					);
+					return;
+				}
+			}
+
 			debounce(() => {
 				dispatch(makeMove({ row, col }));
 				dispatch(setNewPos(null));
 			});
 		}
 	}
-
 	/**
 	 * Processes the move logic on the **Redux level**.
 	 * This method focuses on the game state, updating the board and turn,
@@ -103,9 +118,7 @@ class ChessLogic {
 		if (moveAnalyzer.isEnPassantMove(figure, to)) {
 			possibleOpponentFigure = ChessHelper.getEnPassantCapturedCell(figure, to)?.getFigure() ?? null;
 		}
-
 		ChessLogic.handleFigureMove(board, figure, from, to, possibleOpponentFigure);
-
 		const newState = {
 			highlightedMoves: [],
 			board: boardService.getSerializedBoard(),
@@ -114,7 +127,6 @@ class ChessLogic {
 			isMate: false,
 			currentFigureCell: null,
 		};
-
 		ChessLogic.checkForCheckmate(board, figure, newState);
 		stateUpdater(newState);
 	}

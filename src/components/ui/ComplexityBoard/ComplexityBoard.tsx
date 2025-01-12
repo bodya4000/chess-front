@@ -1,8 +1,12 @@
 import { FC } from 'react';
 import styles from './ComplexityBoard.module.scss';
 import ComplexityRadio from './CoplexityRadio';
+import useApp from '../../../features/chess/hooks/reduxSelelectors/useApp'
+import ChessModes from '../../../features/chess/enums/ChessModes'
 
 const ComplexityBoard: FC = () => {
+	const { mode } = useApp();
+	if (mode == ChessModes.BOT)
 	return (
 		<>
 			<div className={styles.container}>

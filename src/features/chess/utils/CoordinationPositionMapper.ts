@@ -94,7 +94,7 @@ class CoordinationPositionMapper {
 	}
 
 	public static get3DPositionMove(coordinates: Coordinates, cellSize: number = 1.5): number[] {
-		const {figureCell, moveCell} = coordinates
+		const { figureCell, moveCell } = coordinates;
 		return [(moveCell.col - figureCell.col) * cellSize, 0.2, (moveCell.row - figureCell.row) * cellSize];
 	}
 
@@ -103,11 +103,41 @@ class CoordinationPositionMapper {
 	}
 
 	public static parseStringMoveToCells(move: string): Coordinates {
-		const startSquare = move.slice(0, 2);
-		const endSquare = move.slice(2, 4);
+		if (move.length !== 4 && move.length !== 6) {
+			throw new Error(`Invalid move format: ${move}`);
+		}
+		let startSquare: string;
+		let endSquare: string;
+
+		if (move.length === 6) {
+			endSquare = move.slice(2, 4);
+
+			const endRow = Number(endSquare[1]);
+			if (isNaN(endRow)) {
+				throw new Error(`Invalid row in end square: ${endSquare}`);
+			}
+
+			const isPromotionTo8thRank = endRow === 8;
+			const isPromotionTo1stRank = endRow === 1;
+
+			if (isPromotionTo8thRank) {
+				startSquare = move[0] + (endRow - 1);
+			} else if (isPromotionTo1stRank) {
+				startSquare = move[0] + (endRow + 1);
+			} else {
+				throw new Error(`Invalid promotion move: ${move}`);
+			}
+		} else {
+			startSquare = move.slice(0, 2);
+			endSquare = move.slice(2, 4);
+		}
 		const startPos = CoordinationPositionMapper.mapStringCoordinatesToMatrix(startSquare);
 		const endPos = CoordinationPositionMapper.mapStringCoordinatesToMatrix(endSquare);
-		return { figureCell: { row: startPos.row, col: startPos.col }, moveCell: { row: endPos.row, col: endPos.col } };
+
+		return {
+			figureCell: { row: startPos.row, col: startPos.col },
+			moveCell: { row: endPos.row, col: endPos.col },
+		};
 	}
 
 	public static parseCellsMoveToString(coordinates: Coordinates): string {

@@ -1,7 +1,7 @@
 import { FC } from 'react';
-import { useAppDispatch } from '../../hooks/useAppDispatch';
-import { setDepth } from '../../state/BotChessBoardSlice';
 import styles from './ComplexityBoard.module.scss';
+import { useAppDispatch } from '../../../features/chess/hooks/useAppDispatch'
+import { setDepth } from '../../../features/chess/state/BotChessBoardSlice'
 
 interface ComplexityRadioProps {
 	elo: number;

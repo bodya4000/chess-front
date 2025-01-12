@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import useChessGame from '../../hooks/reduxSelelectors/useChessGame';
 import { CellView } from '../../types/CellView';
 import ChessFigure from '../ChessFigure/ChessFigure';
 
@@ -11,8 +12,14 @@ interface DefaultChessCellProps {
 }
 
 const DefaultChessCell: FC<DefaultChessCellProps> = ({ onClick, cell, currentFigureCell, highlighted, position }) => {
+	const { pawnPromotionInfo } = useChessGame();
+	const onClickWithDisableCheck = () => {
+		if (!pawnPromotionInfo) {
+			onClick();
+		}
+	};
 	return (
-		<mesh onClick={onClick} key={`${cell.row}-${cell.col}`} position={position}>
+		<mesh onClick={onClickWithDisableCheck} key={`${cell.row}-${cell.col}`} position={position}>
 			<boxGeometry args={[1.5, 0.35, 1.5]} />
 			<meshStandardMaterial color={highlighted ? 'yellow' : cell.color} />
 			{cell.figure && <ChessFigure figureCell={currentFigureCell} id={cell.figure.id} figure={cell.figure.type} color={cell.figure.color} />}

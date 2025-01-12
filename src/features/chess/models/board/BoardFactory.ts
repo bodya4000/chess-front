@@ -35,7 +35,6 @@ class BoardFactory {
 			case 3:
 				return new King(cell, color);
 			default:
-				console.error(`Invalid column position: ${colPos}`);
 				throw new Error(`Invalid column position: ${colPos}`);
 		}
 	};

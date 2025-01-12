@@ -2,6 +2,7 @@ import { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import useChessGame from '../../hooks/reduxSelelectors/useChessGame';
 import useOnlineChessBoard from '../../hooks/reduxSelelectors/useOnlineChessBoard';
+import Figures from '../../models/enums/Figures';
 import { playerConnectionService } from '../../services/services';
 import { getHighlightMoves } from '../../state/ChessGameSlice';
 import { CellView } from '../../types/CellView';
@@ -22,8 +23,12 @@ const OnlineChessCell: FC<ChessCellProps> = ({ cell, highlighted, position }) =>
 	const move = () => {
 		ChessLogic.handleUIStateForFigureMove(highlighted, currentFigureCell, cell, dispatch);
 		if (highlighted && currentFigureCell) {
+			if (currentFigureCell.figure?.type == Figures.Pawn) {
+				if (cell.row == 0 || cell.row == 7) {
+					return;
+				}
+			}
 			const move = CoordinationPositionMapper.parseCellsMoveToString({ figureCell: { row: currentFigureCell.row, col: currentFigureCell.col }, moveCell: { row: cell.row, col: cell.col } });
-			console.log(`move: ${move}`);
 			playerConnectionService.publish(`/app/player/move/${opponentSession}`, JSON.stringify({ move }));
 		}
 	};

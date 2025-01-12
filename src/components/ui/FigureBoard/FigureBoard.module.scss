@@ -1,0 +1,9 @@
+.board {
+	position: absolute;
+	width: calc(200rem / 16);
+	height: 100vh;
+	background-color: antiquewhite;
+	z-index: 1000;
+	transition: left 0.4s ease;
+
+}

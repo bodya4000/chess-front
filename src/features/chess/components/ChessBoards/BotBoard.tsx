@@ -5,6 +5,7 @@ import { useAppDispatch } from '../../hooks/useAppDispatch';
 import Color from '../../models/enums/Color';
 import { getBotMove, setupColorsForUserAndBot } from '../../state/BotChessBoardSlice';
 import { completeMove } from '../../state/ChessGameSlice';
+import { debounce } from '../../utils/Functions';
 import DefaultChessBoard from './DefaultChessBoard';
 
 const BotBoard: FC = () => {
@@ -20,7 +21,7 @@ const BotBoard: FC = () => {
 		if (botColor == Color.WHITE) {
 			dispatch(getBotMove()).then(result => {
 				if (result.payload) {
-					dispatch(completeMove(result.payload));
+					debounce(() => dispatch(completeMove(result.payload)));
 				}
 			});
 		}

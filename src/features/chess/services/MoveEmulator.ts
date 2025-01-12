@@ -15,7 +15,7 @@ class MoveEmulator {
 	 */
 	public emulateMove(figure: Figure, to: Cell): void {
 		const from = figure.getCell();
-		if (this.moveAnalyzer.isEnPassantMove(figure, to)) {
+		if (this.moveAnalyzer.isEnPassantMove(figure, to)) {			
 			this.handleEnPassantCapture(figure, to);
 		} else if (this.moveAnalyzer.isCastlingMove(figure, to)) {
 			this.handleCastlingMove(figure, to);

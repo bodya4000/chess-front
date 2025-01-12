@@ -8,6 +8,9 @@ import BoardFinder from '../utils/BoardFinder';
 import ChessHelper from '../utils/ChessHelper';
 
 class MoveAnalyzer {
+	private readonly BOARD_START_ROW = 0;
+	private readonly BOARD_END_ROW = 7;
+
 	/**
 	 * Checks if a move is an en passant capture.
 	 * @param figure The pawn attempting the move.

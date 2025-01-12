@@ -1,9 +1,12 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import Color from '../models/enums/Color';
-import { boardService, checkmateAnalyzer } from '../services/services';
+import Figures from '../models/enums/Figures';
+import FigureFactory from '../models/figures/FigureFactory';
+import { boardService, checkmateAnalyzer, chessJsService } from '../services/services';
 import { BoardView } from '../types/BoardView';
 import { CellView } from '../types/CellView';
-import { Coordinates } from '../types/Coordinates';
+import { OpponentMoveInfo } from '../types/OpponentMoveInfo';
+import { PawnPromotionInfo } from '../types/PawnPromotionInfo';
 import ChessLogic from '../utils/ChessLogic';
 import TypesHelper from '../utils/ModelsSerializer';
 import { BotUpdateState } from './types/BotUpdateState';
@@ -17,6 +20,8 @@ export interface ChessState {
 	currentFigureCell: CellView | null;
 	turn: Color;
 	newPos: number[] | null;
+
+	pawnPromotionInfo: PawnPromotionInfo | null;
 }
 
 const initialState: ChessState = {
@@ -27,6 +32,8 @@ const initialState: ChessState = {
 	currentFigureCell: null,
 	turn: Color.WHITE,
 	newPos: null,
+
+	pawnPromotionInfo: null,
 };
 
 /**
@@ -42,13 +49,21 @@ const initialState: ChessState = {
  * @param {Coordinates} payload - Contains the starting and target cell coordinates of the move.
  * @param {object} thunkAPI - The Redux Toolkit `thunkAPI` object, used to dispatch actions.
  */
-export const completeMove = createAsyncThunk('chess/completeMove', async ({ figureCell, moveCell }: Coordinates, thunkAPI) => {
+export const completeMove = createAsyncThunk('chess/completeMove', async ({ coordinates, promotionFigureName }: OpponentMoveInfo, thunkAPI) => {
+	const { figureCell, moveCell } = coordinates;
 	const board = boardService.getBoard();
 	const from = board.getCell(figureCell.row, figureCell.col);
 	const to = board.getCell(moveCell.row, moveCell.col);
-	const figure = from.getFigure();
+	let figure = from.getFigure();
 
 	if (figure) {
+		chessJsService.userMakesMove(coordinates, promotionFigureName);
+		if (promotionFigureName) {
+			figure = FigureFactory.createFigure(promotionFigureName, to, figure.getColor());
+			to.setFigure(figure);
+			const pawnCell = board.getCell(from.getRowPos(), from.getColPos());
+			pawnCell.setFigure(null);
+		}
 		ChessLogic.processGameStateForFigureMove(board, from, to, figure, figure.getColor(), (newState: Partial<ChessState>) => {
 			thunkAPI.dispatch(updateGameState(newState as BotUpdateState));
 		});
@@ -79,6 +94,7 @@ const chessGameSlice = createSlice({
 			const to = board.getCell(row, col);
 			const figure = from.getFigure();
 			if (figure) {
+				chessJsService.userMakesMove({ figureCell: { row: from.getRowPos(), col: from.getColPos() }, moveCell: { row, col } });
 				ChessLogic.processGameStateForFigureMove(board, from, to, figure, state.turn, (newState: Partial<ChessState>) => {
 					Object.assign(state, newState);
 				});
@@ -106,8 +122,28 @@ const chessGameSlice = createSlice({
 		updateGameState(state, action: PayloadAction<BotUpdateState>) {
 			return { ...state, ...action.payload };
 		},
+
+		setPawnPromotionInfo(state, action: PayloadAction<PawnPromotionInfo | null>) {
+			state.pawnPromotionInfo = action.payload;
+		},
+		setFigureInsteadOfPawn(state, action: PayloadAction<Figures>) {
+			if (state.pawnPromotionInfo) {
+				const board = boardService.getBoard();
+				const cell = board.getCell(state.pawnPromotionInfo.row, state.pawnPromotionInfo.col);
+				const coordinates = state.pawnPromotionInfo.fromCoordinates;
+				const pawnCell = board.getCell(coordinates.figureCell.row, coordinates.figureCell.col);
+				const promotingFigure = FigureFactory.createFigure(action.payload, cell, state.pawnPromotionInfo.color);
+				chessJsService.userMakesMove(coordinates, action.payload);
+				cell.setFigure(promotingFigure);
+				pawnCell.setFigure(null);
+				state.pawnPromotionInfo = null;
+				state.highlightedMoves = [];
+				state.turn = updateTurn(state.turn);
+				state.board = boardService.getSerializedBoard();
+			}
+		},
 	},
 });
 
-export const { getHighlightMoves, makeMove, revertMove, setCurrentFigureCell, setNewPos, updateGameState } = chessGameSlice.actions;
+export const { getHighlightMoves, makeMove, revertMove, setCurrentFigureCell, setNewPos, updateGameState, setPawnPromotionInfo, setFigureInsteadOfPawn } = chessGameSlice.actions;
 export default chessGameSlice.reducer;

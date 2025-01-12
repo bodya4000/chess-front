@@ -1,6 +1,8 @@
 import { Chess } from 'chess.js';
 import { Coordinates } from '../types/Coordinates';
+import { OpponentMoveInfo } from '../types/OpponentMoveInfo';
 import CoordinationPositionMapper from '../utils/CoordinationPositionMapper';
+import FigureMapper from '../utils/FigureMapper';
 import BoardService from './BoardService';
 import StockfishService from './StockfishService';
 
@@ -21,6 +23,14 @@ class ChessJsService {
 		this.depth = depth;
 	}
 
+	getLastMove(): string | null {
+    const history = this.chessGame.history();
+    if (history.length > 0) {
+        return history[history.length - 1];
+    }
+    return null;
+}
+
 	setDepth(depth: number) {
 		this.depth = depth;
 	}
@@ -35,11 +45,15 @@ class ChessJsService {
 		console.log(this.chessGame.ascii());
 	}
 
-	private handleBestMove(message: string): Coordinates | void {
+	private handleBestMove(message: string): OpponentMoveInfo | void {
 		const [_, bestMove] = message.split(' ');
 		console.log('BEST MOVE!!!:: ', bestMove);
 		if (!bestMove) return;
-		return CoordinationPositionMapper.parseStringMoveToCells(bestMove);
+		if (bestMove.length == 5) {
+			const promotionFigureName = FigureMapper.mapPromotionFigure(bestMove[4]);
+			return { coordinates: CoordinationPositionMapper.parseStringMoveToCells(bestMove), promotionFigureName };
+		}
+		return { coordinates: CoordinationPositionMapper.parseStringMoveToCells(bestMove) };
 	}
 
 	/**
@@ -47,22 +61,32 @@ class ChessJsService {
 	 * @param start - Starting position of the move (row and column).
 	 * @param end - Ending position of the move (row and column).
 	 */
-	userMakesMove(coordinates: Coordinates): void {
+	userMakesMove(coordinates: Coordinates, promotionFigure?: string): void {
 		const { figureCell, moveCell } = coordinates;
+		
 		const startMove = CoordinationPositionMapper.matrixToStringCoordinates(figureCell);
 		const endMove = CoordinationPositionMapper.matrixToStringCoordinates(moveCell);
 
 		if (startMove && endMove) {
-			const move = `${startMove}${endMove}`;
+			let move = `${startMove}${endMove}`;
+			if (promotionFigure) {
+				move = `${startMove[0]}x${endMove}=${promotionFigure.toUpperCase()[0]}`;
+				console.log(this.chessGame.moves());
+			}
+
 			console.log('move: ', move);
-			this.chessGame.move(move);
+			const result = this.chessGame.move(move);
+
+			if (!result) {
+				console.error('Invalid move: ', move);
+			}
 		}
 	}
 
 	/**
 	 * Executes the bot's move by analyzing the current position and invoking Stockfish.
 	 */
-	async botMakesMove(): Promise<void | Coordinates> {
+	async botMakesMove(): Promise<void | OpponentMoveInfo> {
 		const fen = this.chessGame.fen();
 		const message = await this.engine.getBotMove(fen, this.depth);
 		const data = message.data;
