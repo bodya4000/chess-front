@@ -20,7 +20,7 @@ const OnlineChessCell: FC<ChessCellProps> = memo(
 	({ cell, highlighted, position }) => {
 		const dispatch = useDispatch();
 		const { turn, currentFigureCell } = useChessGame();
-		const { userColor, opponentSession } = useOnlineChessBoard();
+		const { userColor, opponentSession, waitingConnection } = useOnlineChessBoard();
 		const move = () => {
 			ChessLogic.handleUIStateForFigureMove(highlighted, currentFigureCell, cell, dispatch);
 			if (highlighted && currentFigureCell) {
@@ -35,7 +35,7 @@ const OnlineChessCell: FC<ChessCellProps> = memo(
 		};
 
 		const onClick = () => {
-			if (turn == userColor) {
+			if (turn == userColor && !waitingConnection) {
 				if (turn === cell.figure?.color) {
 					dispatch(getHighlightMoves({ row: cell.row, col: cell.col }));
 				} else if (currentFigureCell && highlighted) {

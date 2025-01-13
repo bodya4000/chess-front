@@ -1,7 +1,7 @@
 import { Client, IFrame, IMessage, StompHeaders, StompSubscription } from '@stomp/stompjs';
 
 class WebSocketService {
-	private static readonly BASE_URL = "ws://192.168.0.103:8081/";
+	private static readonly BASE_URL = "ws://192.168.0.100:8081/";
 	private client: Client;
 
 	constructor(brokerEndpoint: string, reconnectDelay: number) {

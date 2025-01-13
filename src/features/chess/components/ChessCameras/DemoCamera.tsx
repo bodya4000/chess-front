@@ -41,7 +41,6 @@ const DemoCamera: React.FC = () => {
 			currentPosition.x = MathUtils.lerp(currentPosition.x, targetX, 0.05);
 			currentPosition.z = MathUtils.lerp(currentPosition.z, targetZ, 0.05);
 			currentPosition.y = MathUtils.lerp(currentPosition.y, targetY, 0.05);
-
 			cameraRef.current.lookAt(0, 0, 0);
 		}
 	});

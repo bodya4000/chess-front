@@ -11,13 +11,41 @@
 	padding: 20px 30px;
 	gap: 1.5rem;
 
+	width: 500px;
+
 	border-radius: 10px;
+
+	@media (max-width: 950px) {
+		width: 400px;
+		left: 25%;
+	}
+
+	@media (max-width: 650px) {
+		width: 300px;
+		left: 25%;
+	}
+
+	@media (max-width: 450px) {
+		width: 250px;
+		left: 15%;
+	}
 
 	h2 {
 		font-weight: 600;
 		font-size: 2rem;
 		color: antiquewhite;
 		text-align: center;
+
+		@media (max-width: 950px) {
+			font-size: 1.5rem;
+		}
+		@media (max-width: 650px) {
+			font-size: 1.2rem;
+		}
+	}
+
+	header {
+		position: absolute;
 	}
 }
 
@@ -25,15 +53,16 @@
 	display: flex;
 	justify-content: space-between;
 	gap: 10px;
-	button {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		text-align: center;
-		padding: 10px 15px;
-		background: antiquewhite;
-		color: black;
-		font-size: 1.5rem;
-		font-weight: 500;
+	width: 100%;
+
+	@media (max-width: 650px) {
+		flex-direction: column;
 	}
+}
+
+.left_top_btn {
+	position: absolute;
+	z-index: 1000;
+	top: 50px;
+	left: 30px;
 }

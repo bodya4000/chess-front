@@ -3,10 +3,12 @@ import ChessModes from '../enums/ChessModes';
 
 interface ChessState {
 	mode: ChessModes;
+	cameraControl: boolean;
 }
 
 const initialState: ChessState = {
 	mode: ChessModes.DEMO,
+	cameraControl: true,
 };
 
 const appSlice = createSlice({
@@ -16,8 +18,11 @@ const appSlice = createSlice({
 		setMode(state, action: PayloadAction<ChessModes>) {
 			state.mode = action.payload;
 		},
+		changeCameraControl(state) {
+			state.cameraControl = !state.cameraControl;
+		},
 	},
 });
 
-export const { setMode } = appSlice.actions;
+export const { setMode, changeCameraControl } = appSlice.actions;
 export default appSlice.reducer;

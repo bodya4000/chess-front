@@ -3,6 +3,7 @@ import ChessModes from '../../../features/chess/enums/ChessModes';
 import { useAppDispatch } from '../../../features/chess/hooks/useAppDispatch';
 import { setMode } from '../../../features/chess/state/AppSlice';
 import styles from '../../sceens/Home.module.scss';
+import WhiteButton from '../WhiteButton/WhiteButton';
 
 const WelcomeBlock: FC = React.memo(() => {
 	const dispatch = useAppDispatch();
@@ -24,9 +25,7 @@ const WelcomeBlock: FC = React.memo(() => {
 			<h2 id='modal-title'>Виберіть як хочете грати</h2>
 			<div className={styles.btn_container}>
 				{modes.map(({ mode, label }) => (
-					<button key={mode} onClick={() => handleClick(mode)}>
-						{label}
-					</button>
+					<WhiteButton mode={mode} onClick={() => handleClick(mode)} label={label} />
 				))}
 			</div>
 		</div>

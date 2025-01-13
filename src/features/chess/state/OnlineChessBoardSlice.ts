@@ -47,5 +47,5 @@ const onlineChessSlice = createSlice({
 	},
 });
 
-export const { setUserColor, setIfWaiting,establishConnection } = onlineChessSlice.actions;
+export const { setUserColor, setIfWaiting, establishConnection } = onlineChessSlice.actions;
 export default onlineChessSlice.reducer;

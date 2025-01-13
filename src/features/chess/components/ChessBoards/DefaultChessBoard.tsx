@@ -2,6 +2,7 @@ import deepEqual from 'fast-deep-equal';
 import { FC, memo, useMemo } from 'react';
 import ChessModes from '../../enums/ChessModes';
 import useApp from '../../hooks/reduxSelelectors/useApp';
+import useResponsiveBoardValues from '../../hooks/useResponsiveBoardValues';
 import { CellView } from '../../types/CellView';
 import BotChessCell from '../ChessCells/BotChessCell';
 import DemoChessCell from '../ChessCells/DemoChessCell';
@@ -16,11 +17,13 @@ interface DefaultChessBoardProps {
 }
 
 const DefaultChessBoard: FC<DefaultChessBoardProps> = memo(
-	({ cells, highlightedMoves, cellSize = 1.5 }) => {
+	({ cells, highlightedMoves }) => {
 		const { mode } = useApp();
+		const { cellSize } = useResponsiveBoardValues();
 		const boardSize = useMemo(() => cellSize * 8, [cellSize]);
 		const borderThickness = useMemo(() => 0.5, []);
-		const borderHeight = useMemo(() => 0.6, []);
+		const borderHeight = useMemo(() => cellSize * 0.5, [cellSize]);
+
 		const createChessBoard = () => {
 			const squares = [];
 			if (cells) {
@@ -82,7 +85,6 @@ const DefaultChessBoard: FC<DefaultChessBoardProps> = memo(
 					<meshStandardMaterial color='black' />
 				</mesh>
 
-				<gridHelper args={[8, 8]} position={[0, 0, 0]} />
 			</group>
 		);
 	},

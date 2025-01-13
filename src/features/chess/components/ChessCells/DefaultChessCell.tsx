@@ -1,7 +1,8 @@
 import { FC, memo } from 'react';
 import useChessGame from '../../hooks/reduxSelelectors/useChessGame';
+import useResponsiveBoardValues from '../../hooks/useResponsiveBoardValues';
 import { CellView } from '../../types/CellView';
-import ChessFigure from '../ChessFigure/ChessFigure'
+import ChessFigure from '../ChessFigure/ChessFigure';
 
 interface DefaultChessCellProps {
 	onClick: () => void;
@@ -19,10 +20,11 @@ const DefaultChessCell: FC<DefaultChessCellProps> = memo(
 				onClick();
 			}
 		};
+		const { cellSize } = useResponsiveBoardValues();
 
 		return (
 			<mesh onClick={onClickWithDisableCheck} key={`${cell.row}-${cell.col}`} position={position}>
-				<boxGeometry args={[1.5, 0.35, 1.5]} />
+				<boxGeometry args={[cellSize, 0.35, cellSize]} />
 				<meshStandardMaterial color={highlighted ? 'yellow' : cell.color} />
 				{cell.figure && <ChessFigure figureCell={currentFigureCell} id={cell.figure.id} figure={cell.figure.type} color={cell.figure.color} />}
 			</mesh>
