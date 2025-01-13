@@ -1,13 +1,37 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="uk-UA">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="description" content="Грайте в шахи онлайн проти друга, комп'ютера або реальних гравців." />
+		<meta name="keywords" content="шахи онлайн, грати в шахи, шахи з ботом, шахова гра, онлайн шахи, шахи з другом, шахи безкоштовно" />
+		<meta property="og:title" content="Грати в шахи онлайн" />
+		<meta property="og:description" content="Грайте проти друга, комп'ютера або онлайн-гравців." />
+		<meta property="og:image" content="https://example.com/og-image.jpg" />
+		<meta property="og:url" content="https://example.com/" />
+		<meta property="og:type" content="website" />
+		<meta name="theme-color" content="#ffffff" />
+		<link rel="icon" href="/public/assets/images/favicon.png" />
+		<title>Грати в шахи онлайн | Chess App</title>
+	</head>
+	<body>
+		<div id="root"></div>
+		<script type="module" src="/src/main.tsx"></script>
+		<script type="application/ld+json">
+			{
+				"@context": "https://schema.org",
+				"@type": "Game",
+				"name": "Грати в шахи онлайн",
+				"url": "https://example.com",
+				"description": "Грайте в шахи онлайн проти друга, комп'ютера або реальних гравців.",
+				"image": "https://example.com/og-image.jpg",
+				"gamePlatform": ["Web"],
+				"audience": {
+					"@type": "Audience",
+					"audienceType": "Гравці в шахи"
+				}
+			}
+		</script>
+		<noscript> Для роботи цієї сторінки потрібен ввімкнений JavaScript. </noscript>
+	</body>
 </html>

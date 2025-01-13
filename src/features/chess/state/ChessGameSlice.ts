@@ -13,7 +13,7 @@ import { BotUpdateState } from './types/BotUpdateState';
 import { updateTurn } from './utils/helpers';
 
 export interface ChessState {
-	board: BoardView;
+	board: BoardView | undefined;
 	isCheck: boolean;
 	isMate: boolean;
 	highlightedMoves: CellView[];
@@ -25,14 +25,13 @@ export interface ChessState {
 }
 
 const initialState: ChessState = {
-	board: boardService.getSerializedBoard(),
+	board: undefined,
 	isCheck: false,
 	isMate: false,
 	highlightedMoves: [],
 	currentFigureCell: null,
 	turn: Color.WHITE,
 	newPos: null,
-
 	pawnPromotionInfo: null,
 };
 
@@ -74,6 +73,9 @@ const chessGameSlice = createSlice({
 	name: 'chess',
 	initialState,
 	reducers: {
+		init(state) {
+			state.board = boardService.getSerializedBoard();
+		},
 		getHighlightMoves(state, action: PayloadAction<{ row: number; col: number }>) {
 			const { row, col } = action.payload;
 			const board = boardService.getBoard();
@@ -145,5 +147,5 @@ const chessGameSlice = createSlice({
 	},
 });
 
-export const { getHighlightMoves, makeMove, revertMove, setCurrentFigureCell, setNewPos, updateGameState, setPawnPromotionInfo, setFigureInsteadOfPawn } = chessGameSlice.actions;
+export const { init, getHighlightMoves, makeMove, revertMove, setCurrentFigureCell, setNewPos, updateGameState, setPawnPromotionInfo, setFigureInsteadOfPawn } = chessGameSlice.actions;
 export default chessGameSlice.reducer;

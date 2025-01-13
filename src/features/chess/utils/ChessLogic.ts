@@ -76,7 +76,6 @@ class ChessLogic {
 			};
 			const targetPosition: number[] = CoordinationPositionMapper.get3DPositionMove(coordinates);
 			dispatch(setNewPos(targetPosition));
-
 			if (currentFigureCell.figure?.type == Figures.Pawn) {
 				if (row == 0 || row == 7) {
 					const pawnColor = row == 0 ? Color.BLACK : Color.WHITE;
@@ -92,7 +91,6 @@ class ChessLogic {
 					return;
 				}
 			}
-
 			debounce(() => {
 				dispatch(makeMove({ row, col }));
 				dispatch(setNewPos(null));

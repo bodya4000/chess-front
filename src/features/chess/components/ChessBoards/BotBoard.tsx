@@ -1,12 +1,13 @@
-import { FC, useEffect } from 'react';
+import { FC, useCallback, useEffect } from 'react';
 import useBotChessBoard from '../../hooks/reduxSelelectors/useBotChessBoard';
 import useChessGame from '../../hooks/reduxSelelectors/useChessGame';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import Color from '../../models/enums/Color';
 import { getBotMove, setupColorsForUserAndBot } from '../../state/BotChessBoardSlice';
-import { completeMove } from '../../state/ChessGameSlice';
+import { completeMove, init } from '../../state/ChessGameSlice';
 import { debounce } from '../../utils/Functions';
 import DefaultChessBoard from './DefaultChessBoard';
+import { OpponentMoveInfo } from '../../types/OpponentMoveInfo'
 
 const BotBoard: FC = () => {
 	const { botColor } = useBotChessBoard();
@@ -17,16 +18,24 @@ const BotBoard: FC = () => {
 		dispatch(setupColorsForUserAndBot());
 	}, [dispatch]);
 
-	useEffect(() => {
+	const handleBotMove = useCallback(() => {
 		if (botColor == Color.WHITE) {
 			dispatch(getBotMove()).then(result => {
 				if (result.payload) {
-					debounce(() => dispatch(completeMove(result.payload)));
+					debounce(() => dispatch(completeMove(result.payload as OpponentMoveInfo)));
 				}
 			});
 		}
 	}, [botColor, dispatch]);
-	return <DefaultChessBoard cells={board.cells} highlightedMoves={highlightedMoves} />;
+
+	useEffect(() => {
+		handleBotMove();
+	}, [botColor, dispatch, handleBotMove]);
+
+	useEffect(() => {
+		dispatch(init());
+	},[dispatch]);
+	if (board) return <DefaultChessBoard cells={board.cells} highlightedMoves={highlightedMoves} />;
 };
 
 export default BotBoard;

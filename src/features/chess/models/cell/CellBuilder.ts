@@ -1,6 +1,6 @@
+import Board from '../board/Board'
 import Color from '../enums/Color';
 import Figure from '../figures/Figure';
-import Board from '../models/Board';
 import Cell from './Cell';
 
 class CellBuilder {

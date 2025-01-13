@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
-import * as THREE from 'three';
+import { Group, Mesh, MeshStandardMaterial, Object3DEventMap, Scene } from 'three';
 
-const useFigureQuality = (clonedScene: THREE.Group<THREE.Object3DEventMap> | THREE.Scene, color: string) => {
+const useFigureQuality = (clonedScene: Group<Object3DEventMap> | Scene, color: string) => {
 	useEffect(() => {
 		clonedScene.traverse(child => {
-			if (child instanceof THREE.Mesh) {
-				if (child.material instanceof THREE.MeshStandardMaterial) {
+			if (child instanceof Mesh) {
+				if (child.material instanceof MeshStandardMaterial) {
 					child.material = child.material.clone();
 					child.material.color.set(color === 'white' ? 'rgba(255, 249, 230)' : '#737373');
 					child.material.metalness = 0.5;

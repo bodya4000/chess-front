@@ -1,12 +1,18 @@
-import { FC } from 'react';
+import { FC, memo, useEffect } from 'react';
 import useChessGame from '../../hooks/reduxSelelectors/useChessGame';
+import { useAppDispatch } from '../../hooks/useAppDispatch';
 import usePlayerConnection from '../../hooks/usePlayerConnection';
+import { init } from '../../state/ChessGameSlice';
 import DefaultChessBoard from './DefaultChessBoard';
 
-const OnlineBoard: FC = () => {
-	const { board, highlightedMoves } = useChessGame();	
+const OnlineBoard: FC = memo(() => {
+	const { board, highlightedMoves } = useChessGame();
+	const dispatch = useAppDispatch();
 	usePlayerConnection();
-	return <DefaultChessBoard cells={board.cells} highlightedMoves={highlightedMoves} />;
-};
+	useEffect(() => {
+		dispatch(init());
+	},[dispatch]);
+	if (board) return <DefaultChessBoard cells={board.cells} highlightedMoves={highlightedMoves} />;
+});
 
 export default OnlineBoard;

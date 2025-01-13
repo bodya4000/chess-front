@@ -1,10 +1,16 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import useChessGame from '../../hooks/reduxSelelectors/useChessGame';
+import { useAppDispatch } from '../../hooks/useAppDispatch';
+import { init } from '../../state/ChessGameSlice';
 import DefaultChessBoard from './DefaultChessBoard';
 
 const SingleBoard: FC = () => {
 	const { board, highlightedMoves } = useChessGame();
-	return <DefaultChessBoard cells={board.cells} highlightedMoves={highlightedMoves} />;
+	const dispatch = useAppDispatch();
+	useEffect(() => {
+		dispatch(init());
+	},[dispatch]);
+	if (board) return <DefaultChessBoard cells={board.cells} highlightedMoves={highlightedMoves} />;
 };
 
 export default SingleBoard;

@@ -3,6 +3,8 @@ import { Canvas } from '@react-three/fiber';
 import { FC, ReactNode } from 'react';
 import ChessModes from '../../enums/ChessModes';
 import useApp from '../../hooks/reduxSelelectors/useApp';
+import DemoCamera from '../ChessCameras/DemoCamera';
+import GameCamera from '../ChessCameras/GameCamera';
 import styles from './ChessCanvas.module.scss';
 
 interface ChessCanvasProps {
@@ -15,21 +17,24 @@ const ChessCanvas: FC<ChessCanvasProps> = ({ children }) => {
 		<>
 			<div className={`${mode == ChessModes.DEMO ? styles.canvas__demo : ''}`}>
 				<div className={`${styles.canvas} ${mode == ChessModes.DEMO ? styles.canvas__opacity : ''}`}>
-					<Canvas camera={{ position: [2, 15, -30], fov: 50 }}>
-						<ambientLight intensity={2} />
+					<Canvas>
+						<ambientLight intensity={0.8} />
 						<pointLight position={[10, 10, 10]} />
 						<directionalLight position={[10, 10, 5]} intensity={2} castShadow />
-
+						{mode == ChessModes.DEMO && <DemoCamera />}
+						{mode != ChessModes.DEMO && <GameCamera />}
 						{children}
-
 						<OrbitControls
-							enableZoom={true} // Дозволити масштабування
-							minDistance={15} // Мінімальна відстань до сцени
-							maxDistance={30} // Максимальна відстань до сцени
-							maxPolarAngle={Math.PI / 2} // Обмеження вертикального обертання (максимум 90°)
-							minPolarAngle={0} // Обмеження вертикального обертання (мінімум 0°)
-							target={[0, 0, 0]} // Центр обертання камери
-							enablePan={false} // Заборонити пересування
+							makeDefault
+							enableZoom={mode != ChessModes.DEMO}
+							enableRotate={mode != ChessModes.DEMO}
+							minDistance={15}
+							maxDistance={30}
+							maxPolarAngle={Math.PI / 2}
+							minPolarAngle={0}
+							target={[0, 0, 0]}
+							enablePan={false}
+							dampingFactor={1}
 						/>
 					</Canvas>
 				</div>

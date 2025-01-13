@@ -1,14 +1,14 @@
 import { SpringRef } from '@react-spring/three';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { setNewPos } from '../../state/ChessGameSlice';
 import { CellView } from '../../types/CellView';
-import { setNewPos } from '../../state/ChessGameSlice'
 
 interface Props {
 	newPos: number[] | null;
 	figureCell: CellView | null;
 	id: number;
-	api: SpringRef<{ position: number[] }>;
+	api: SpringRef<{ scale: number; position: [number, number, number] }>;
 }
 type Hook<Props> = (props: Props) => void;
 

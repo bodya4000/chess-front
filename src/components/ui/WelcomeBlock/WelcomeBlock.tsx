@@ -1,34 +1,36 @@
-import { FC } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { FC, useCallback } from 'react';
 import ChessModes from '../../../features/chess/enums/ChessModes';
-import useApp from '../../../features/chess/hooks/reduxSelelectors/useApp';
+import { useAppDispatch } from '../../../features/chess/hooks/useAppDispatch';
 import { setMode } from '../../../features/chess/state/AppSlice';
 import styles from '../../sceens/Home.module.scss';
 
-const WelcomeBlock: FC = () => {
-	const { mode } = useApp();
-	const dispatch = useDispatch();
-	const friendClick = () => {
-		dispatch(setMode(ChessModes.SINGLE));
-	};
-	const botClick = () => {
-		dispatch(setMode(ChessModes.BOT));
-	};
-	const onlineClick = () => {
-		dispatch(setMode(ChessModes.ONLINE));
-	};
-	if (mode == ChessModes.DEMO)
-		return (
-			<div className={styles.user_welcome}>
-				<h1>Виберіть як хочете грати</h1>
+const WelcomeBlock: FC = React.memo(() => {
+	const dispatch = useAppDispatch();
+	const handleClick = useCallback(
+		(mode: ChessModes) => {
+			dispatch(setMode(mode));
+		},
+		[dispatch]
+	);
 
-				<div className={styles.btn_container}>
-					<button onClick={friendClick}>Друг</button>
-					<button onClick={botClick}>Компʼютер</button>
-					<button onClick={onlineClick}>Онлайн</button>
-				</div>
+	const modes = [
+		{ mode: ChessModes.SINGLE, label: 'Друг' },
+		{ mode: ChessModes.BOT, label: 'Компʼютер' },
+		{ mode: ChessModes.ONLINE, label: 'Онлайн' },
+	];
+
+	return (
+		<div role='dialog' aria-labelledby='modal-title' aria-describedby='modal-description' className={`${styles.user_welcome}`} aria-hidden={false}>
+			<h2 id='modal-title'>Виберіть як хочете грати</h2>
+			<div className={styles.btn_container}>
+				{modes.map(({ mode, label }) => (
+					<button key={mode} onClick={() => handleClick(mode)}>
+						{label}
+					</button>
+				))}
 			</div>
-		);
-};
+		</div>
+	);
+});
 
 export default WelcomeBlock;

@@ -27,8 +27,6 @@ const PromotingFigure: FC<PromotingFigure> = ({ figureName, top, color }) => {
 	const dispatch = useAppDispatch();
 	const onClick = () => {
 		dispatch(setFigureInsteadOfPawn(figureName));
-		console.log(mode);
-		console.log(pawnPromotionInfo);
 		if (mode == ChessModes.ONLINE && pawnPromotionInfo) {
 			const coordinates = pawnPromotionInfo?.fromCoordinates;
 			const startMove = CoordinationPositionMapper.matrixToStringCoordinates(coordinates?.figureCell);

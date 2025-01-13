@@ -98,9 +98,7 @@ class CheckmateAnalyzer {
 			}
 			return true;
 		});
-		console.log(filteredFigureMoves);
 		castlingMoves = castlingMoves.filter(cellToMove => this.checkCastlingMovePossibility({ king: figure, cellToMove }, filteredFigureMoves));
-		console.log(castlingMoves);
 		return filteredFigureMoves.concat(castlingMoves);
 	}
 
@@ -126,14 +124,11 @@ class CheckmateAnalyzer {
 
 		if (isShortCastling) {
 			const requiredCells = [board.getCell(kingCell.getRowPos(), kingStartCol - 1)];
-			console.log(requiredCells);
-			console.log(partlyFilteredCells);
 			console.log(requiredCells.every(cell => partlyFilteredCells.some(filteredCell => filteredCell.getRowPos() == cell.getRowPos() && filteredCell.getColPos() == cell.getColPos())));
 			return requiredCells.every(cell => partlyFilteredCells.some(filteredCell => filteredCell.getRowPos() == cell.getRowPos() && filteredCell.getColPos() == cell.getColPos()));
 		}
 
 		if (isLongCastling) {
-			console.log('checcking long castling!');
 			const requiredCells = [board.getCell(kingCell.getRowPos(), kingStartCol + 1), board.getCell(kingCell.getRowPos(), kingStartCol + 2), board.getCell(kingCell.getRowPos(), kingStartCol + 3)];
 			return requiredCells.every(cell => partlyFilteredCells.some(filteredCell => filteredCell.getRowPos() == cell.getRowPos() && filteredCell.getColPos() == cell.getColPos()));
 		}

@@ -30,22 +30,24 @@ const usePlayerConnection = () => {
 
 	const handleMoveMessage = (data: SocketMoveMessage) => {
 		{
-			console.log('opponent move: ', data.move);
-			const coordinates = CoordinationPositionMapper.parseStringMoveToCells(data.move);
-			const target3DPosition = CoordinationPositionMapper.get3DPositionMove(coordinates);
-			console.log(coordinates);
-			const movingFigure = board.cells[coordinates.figureCell.row][coordinates.figureCell.col];
-			dispatch(setCurrentFigureCell(movingFigure));
-			dispatch(setNewPos(target3DPosition));
-			debounce(() => {
-				if (data.move.length == 6) {
-					const promotionFigureName = FigureMapper.mapPromotionFigure(data.move[5]);
-					dispatch(completeMove({ coordinates, promotionFigureName }));
-				} else {
-					dispatch(completeMove({ coordinates }));
-				}
-				dispatch(setNewPos(null));
-			});
+			if (board) {
+				console.log('opponent move: ', data.move);
+				const coordinates = CoordinationPositionMapper.parseStringMoveToCells(data.move);
+				const target3DPosition = CoordinationPositionMapper.get3DPositionMove(coordinates);
+				console.log(coordinates);
+				const movingFigure = board.cells[coordinates.figureCell.row][coordinates.figureCell.col];
+				dispatch(setCurrentFigureCell(movingFigure));
+				dispatch(setNewPos(target3DPosition));
+				debounce(() => {
+					if (data.move.length == 6) {
+						const promotionFigureName = FigureMapper.mapPromotionFigure(data.move[5]);
+						dispatch(completeMove({ coordinates, promotionFigureName }));
+					} else {
+						dispatch(completeMove({ coordinates }));
+					}
+					// dispatch(setNewPos(null));
+				}, 1000);
+			}
 		}
 	};
 
@@ -70,7 +72,7 @@ const usePlayerConnection = () => {
 				console.error('Broker reported error:', error);
 			}
 		);
-	}, [dispatch]);
+	}, [dispatch, handleEstablishMessage, handleMoveMessage]);
 };
 
 export default usePlayerConnection;

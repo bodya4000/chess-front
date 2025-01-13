@@ -8,6 +8,7 @@ import { CellView } from '../../types/CellView';
 import ChessLogic from '../../utils/ChessLogic';
 import { debounce } from '../../utils/Functions';
 import DefaultChessCell from './DefaultChessCell';
+import { OpponentMoveInfo } from '../../types/OpponentMoveInfo'
 
 interface ChessCellProps {
 	cell: CellView;
@@ -23,7 +24,7 @@ const BotChessCell: FC<ChessCellProps> = ({ cell, highlighted, position }) => {
 	const move = () => {
 		ChessLogic.handleUIStateForFigureMove(highlighted, currentFigureCell, cell, dispatch);
 		debounce(() => {
-			dispatch(getBotMove()).then(result => result.payload && debounce(() => dispatch(completeMove(result.payload))));
+			dispatch(getBotMove()).then(result => result.payload && debounce(() => dispatch(completeMove(result.payload as OpponentMoveInfo))));
 		});
 	};
 

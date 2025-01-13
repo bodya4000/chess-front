@@ -3,7 +3,6 @@ import { Coordinates } from '../types/Coordinates';
 import { OpponentMoveInfo } from '../types/OpponentMoveInfo';
 import CoordinationPositionMapper from '../utils/CoordinationPositionMapper';
 import FigureMapper from '../utils/FigureMapper';
-import BoardService from './BoardService';
 import StockfishService from './StockfishService';
 
 /**
@@ -13,23 +12,21 @@ import StockfishService from './StockfishService';
 class ChessJsService {
 	private readonly chessGame: Chess;
 	private readonly engine;
-	private readonly boardService: BoardService;
 	private depth: number;
 
-	constructor(boardService: BoardService, depth: number = 5) {
+	constructor(depth: number = 5) {
 		this.chessGame = new Chess();
 		this.engine = new StockfishService();
-		this.boardService = boardService;
 		this.depth = depth;
 	}
 
 	getLastMove(): string | null {
-    const history = this.chessGame.history();
-    if (history.length > 0) {
-        return history[history.length - 1];
-    }
-    return null;
-}
+		const history = this.chessGame.history();
+		if (history.length > 0) {
+			return history[history.length - 1];
+		}
+		return null;
+	}
 
 	setDepth(depth: number) {
 		this.depth = depth;
@@ -46,6 +43,7 @@ class ChessJsService {
 	}
 
 	private handleBestMove(message: string): OpponentMoveInfo | void {
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const [_, bestMove] = message.split(' ');
 		console.log('BEST MOVE!!!:: ', bestMove);
 		if (!bestMove) return;
@@ -63,7 +61,7 @@ class ChessJsService {
 	 */
 	userMakesMove(coordinates: Coordinates, promotionFigure?: string): void {
 		const { figureCell, moveCell } = coordinates;
-		
+
 		const startMove = CoordinationPositionMapper.matrixToStringCoordinates(figureCell);
 		const endMove = CoordinationPositionMapper.matrixToStringCoordinates(moveCell);
 
@@ -89,7 +87,8 @@ class ChessJsService {
 	async botMakesMove(): Promise<void | OpponentMoveInfo> {
 		const fen = this.chessGame.fen();
 		const message = await this.engine.getBotMove(fen, this.depth);
-		const data = message.data;
+		console.log(message);
+		const data = message;
 		const bestmove = data.bestmove;
 		return this.handleBestMove(bestmove);
 	}

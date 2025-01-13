@@ -1,11 +1,18 @@
-import axios from 'axios';
-
 class StockfishService {
 	private readonly BASE_URL = 'https://stockfish.online/api/s/v2.php';
-	getBotMove(fen: string, depth: number) {
+	async getBotMove(fen: string, depth: number) {
 		const url = `${this.BASE_URL}?fen=${fen}&depth=${depth}`;
 		console.log(fen);
-		return axios.get(url);
+		try {
+			const response = await fetch(url);
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			}
+			return await response.json();
+		} catch (error) {
+			console.error('Fetch error:', error);
+			throw error;
+		}
 	}
 }
 
