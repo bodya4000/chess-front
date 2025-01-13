@@ -67,14 +67,14 @@ class ChessLogic {
 	 * @param cell - The target cell for the move
 	 * @param dispatch - The Redux dispatch function to trigger state updates
 	 */
-	static handleUIStateForFigureMove(highlighted: boolean | undefined, currentFigureCell: CellView | null, cell: CellView, dispatch: Dispatch) {
+	static handleUIStateForFigureMove(highlighted: boolean | undefined, currentFigureCell: CellView | null, cell: CellView, dispatch: Dispatch, cellSize?: number) {
 		if (highlighted && currentFigureCell) {
 			const { row, col } = cell;
 			const coordinates = {
 				figureCell: { row: currentFigureCell.row, col: currentFigureCell.col },
 				moveCell: { row, col },
 			};
-			const targetPosition: number[] = CoordinationPositionMapper.get3DPositionMove(coordinates);
+			const targetPosition: number[] = CoordinationPositionMapper.get3DPositionMove(coordinates, cellSize);
 			dispatch(setNewPos(targetPosition));
 			if (currentFigureCell.figure?.type == Figures.Pawn) {
 				if (row == 0 || row == 7) {

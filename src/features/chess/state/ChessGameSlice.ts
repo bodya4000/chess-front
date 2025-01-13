@@ -65,6 +65,7 @@ export const completeMove = createAsyncThunk('chess/completeMove', async ({ coor
 		}
 		ChessLogic.processGameStateForFigureMove(board, from, to, figure, figure.getColor(), (newState: Partial<ChessState>) => {
 			thunkAPI.dispatch(updateGameState(newState as BotUpdateState));
+			thunkAPI.dispatch(setNewPos(null));
 		});
 	}
 });

@@ -17,12 +17,12 @@ const initialState: BotChessState = {
 	complexity: 1,
 };
 
-export const getBotMove = createAsyncThunk('botChess/getBotMove', async (_, thunkAPI) => {
+export const getBotMove = createAsyncThunk('botChess/getBotMove', async (cellSize: number, thunkAPI) => {
 	const response = await chessJsService.botMakesMove();
 	if (response) {
 		const { coordinates } = response;
 		const { figureCell, moveCell } = coordinates;
-		const targetPosition: number[] = CoordinationPositionMapper.get3DPositionMove({ figureCell: { row: figureCell.row, col: figureCell.col }, moveCell: { row: moveCell.row, col: moveCell.col } });
+		const targetPosition: number[] = CoordinationPositionMapper.get3DPositionMove({ figureCell: { row: figureCell.row, col: figureCell.col }, moveCell: { row: moveCell.row, col: moveCell.col } }, cellSize);
 		const currentFigureCellView = ModelsSerializer.serializeCell(boardService.getBoard().getCell(figureCell.row, figureCell.col));
 		thunkAPI.dispatch(setCurrentFigureCell(currentFigureCellView));
 		thunkAPI.dispatch(setNewPos(targetPosition));

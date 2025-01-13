@@ -17,8 +17,8 @@ const GameCamera: React.FC = memo(() => {
 
 	const cameraRef = useRef<TreePerspectiveCamera>(null);
 
-	const whitePosition = useMemo(() => new Vector3(0, 15, -10), []);
-	const blackPosition = useMemo(() => new Vector3(0, 15, 10), []);
+	const whitePosition = useMemo(() => new Vector3(0, 12, -6), []);
+	const blackPosition = useMemo(() => new Vector3(0, 12, 6), []);
 	const cameraPosition = useMemo(() => {
 		if (mode === ChessModes.SINGLE) {
 			return turn === Color.WHITE ? whitePosition : blackPosition;
@@ -49,7 +49,7 @@ const GameCamera: React.FC = memo(() => {
 		return <PerspectiveCamera ref={cameraRef} makeDefault />;
 	}
 
-	return <OrbitControls position={[0,0,0]} makeDefault enableZoom={true} enableRotate={true} minDistance={15} maxDistance={30} maxPolarAngle={Math.PI / 2} minPolarAngle={0} target={[0, 0, 0]} enablePan={false} dampingFactor={1} />;
+	return <OrbitControls position={[0, 0, 0]} makeDefault enableZoom={true} enableRotate={true} minDistance={5} maxDistance={18} maxPolarAngle={Math.PI / 2} minPolarAngle={0} target={[0, 0, 0]} enablePan={false} dampingFactor={1} />;
 });
 
 export default GameCamera;

@@ -7,6 +7,7 @@ import { getHighlightMoves } from '../../state/ChessGameSlice';
 import { CellView } from '../../types/CellView';
 import ChessLogic from '../../utils/ChessLogic';
 import DefaultChessCell from './DefaultChessCell';
+import useResponsiveBoardValues from '../../hooks/useResponsiveBoardValues'
 
 interface ChessCellProps {
 	cell: CellView;
@@ -18,8 +19,10 @@ const SingleChessCell: FC<ChessCellProps> = ({ cell, highlighted, position }) =>
 	const dispatch = useDispatch();
 	const { mode } = useApp();
 	const { turn, currentFigureCell } = useChessGame();
+	const { cellSize } = useResponsiveBoardValues();
+
 	const move = () => {
-		ChessLogic.handleUIStateForFigureMove(highlighted, currentFigureCell, cell, dispatch);
+		ChessLogic.handleUIStateForFigureMove(highlighted, currentFigureCell, cell, dispatch,cellSize);
 	};
 
 	const onClick = () => {

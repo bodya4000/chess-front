@@ -8,25 +8,28 @@ import { completeMove, init } from '../../state/ChessGameSlice';
 import { debounce } from '../../utils/Functions';
 import DefaultChessBoard from './DefaultChessBoard';
 import { OpponentMoveInfo } from '../../types/OpponentMoveInfo'
+import useResponsiveBoardValues from '../../hooks/useResponsiveBoardValues'
 
 const BotBoard: FC = () => {
 	const { botColor } = useBotChessBoard();
 	const { board, highlightedMoves } = useChessGame();
 	const dispatch = useAppDispatch();
+	const {cellSize} = useResponsiveBoardValues()
 
 	useEffect(() => {
 		dispatch(setupColorsForUserAndBot());
 	}, [dispatch]);
 
+
 	const handleBotMove = useCallback(() => {
 		if (botColor == Color.WHITE) {
-			dispatch(getBotMove()).then(result => {
+			dispatch(getBotMove(cellSize)).then(result => {
 				if (result.payload) {
 					debounce(() => dispatch(completeMove(result.payload as OpponentMoveInfo)));
 				}
 			});
 		}
-	}, [botColor, dispatch]);
+	}, [botColor, dispatch,cellSize]);
 
 	useEffect(() => {
 		handleBotMove();

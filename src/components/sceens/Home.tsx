@@ -10,7 +10,6 @@ import useChessGame from '../../features/chess/hooks/reduxSelelectors/useChessGa
 import useOnlineChessBoard from '../../features/chess/hooks/reduxSelelectors/useOnlineChessBoard';
 import { useAppDispatch } from '../../features/chess/hooks/useAppDispatch';
 import { changeCameraControl } from '../../features/chess/state/AppSlice';
-import ComplexityBoard from '../ui/ComplexityBoard/ComplexityBoard';
 import FigureBoard from '../ui/FigureBoard/FigureBoard';
 import WaitingBlock from '../ui/WaitingBlock/WaitingBlock';
 import WelcomeBlock from '../ui/WelcomeBlock/WelcomeBlock';
@@ -34,16 +33,16 @@ const Home: FC = () => {
 						<FigureBoard pawnPromotionInfo={pawnPromotionInfo} />
 					</section>
 				)}
-
+				{/* 
 				{mode == ChessModes.BOT && (
 					<section aria-label='Board to pick chess bot level'>
 						<ComplexityBoard />
 					</section>
-				)}
-
-				<section aria-label='Button to change board control mode'>
+				)} */}
+				{!pawnPromotionInfo && 	<section aria-label='Button to change board control mode'>
 					<WhiteButton className={styles.left_top_btn} label={`${cameraControl ? 'Ручна камера' : 'Автоматична камера'}`} onClick={() => dispatch(changeCameraControl())} />
-				</section>
+				</section>}
+			
 
 				<ChessCanvas>
 					{mode === ChessModes.DEMO && <DemoBoard />}

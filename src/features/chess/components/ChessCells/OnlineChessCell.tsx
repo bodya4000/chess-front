@@ -9,6 +9,7 @@ import { CellView } from '../../types/CellView';
 import ChessLogic from '../../utils/ChessLogic';
 import CoordinationPositionMapper from '../../utils/CoordinationPositionMapper';
 import DefaultChessCell from './DefaultChessCell';
+import useResponsiveBoardValues from '../../hooks/useResponsiveBoardValues'
 
 interface ChessCellProps {
 	cell: CellView;
@@ -21,8 +22,9 @@ const OnlineChessCell: FC<ChessCellProps> = memo(
 		const dispatch = useDispatch();
 		const { turn, currentFigureCell } = useChessGame();
 		const { userColor, opponentSession, waitingConnection } = useOnlineChessBoard();
+		const {cellSize} = useResponsiveBoardValues()
 		const move = () => {
-			ChessLogic.handleUIStateForFigureMove(highlighted, currentFigureCell, cell, dispatch);
+			ChessLogic.handleUIStateForFigureMove(highlighted, currentFigureCell, cell, dispatch,cellSize);
 			if (highlighted && currentFigureCell) {
 				if (currentFigureCell.figure?.type == Figures.Pawn) {
 					if (cell.row == 0 || cell.row == 7) {
@@ -35,7 +37,8 @@ const OnlineChessCell: FC<ChessCellProps> = memo(
 		};
 
 		const onClick = () => {
-			if (turn == userColor && !waitingConnection) {
+			console.log(turn == userColor && !waitingConnection);
+			if (turn == userColor) {
 				if (turn === cell.figure?.color) {
 					dispatch(getHighlightMoves({ row: cell.row, col: cell.col }));
 				} else if (currentFigureCell && highlighted) {

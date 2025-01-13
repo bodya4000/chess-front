@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import ChessModes from '../enums/ChessModes';
 import Color from '../models/enums/Color';
 import { playerConnectionService } from '../services/services';
@@ -13,47 +13,51 @@ import { debounce } from '../utils/Functions';
 import Generator from '../utils/Generator';
 import useChessGame from './reduxSelelectors/useChessGame';
 import { useAppDispatch } from './useAppDispatch';
+import useResponsiveBoardValues from './useResponsiveBoardValues';
 
 const usePlayerConnection = () => {
 	const dispatch = useAppDispatch();
 	const { board } = useChessGame();
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const handleEstablishMessage = (data: SocketEstablishMessage, userSession: string) => {
-		const userColor = data.playerColor === 'Black' ? Color.BLACK : Color.WHITE;
-		dispatch(setMode(ChessModes.ONLINE));
-		dispatch(
-			establishConnection({
-				userSession,
-				opponentSession: data.sessionId,
-				waitingConnection: false,
-				userColor,
-			})
-		);
-	};
+	const handleEstablishMessage = useCallback(
+		(data: SocketEstablishMessage, userSession: string) => {
+			const userColor = data.playerColor === 'Black' ? Color.BLACK : Color.WHITE;
+			dispatch(setMode(ChessModes.ONLINE));
+			dispatch(
+				establishConnection({
+					userSession,
+					opponentSession: data.sessionId,
+					waitingConnection: false,
+					userColor,
+				})
+			);
+		},
+		[dispatch]
+	);
 
-	const handleMoveMessage = (data: SocketMoveMessage) => {
-		if (board) {
-			console.log('opponent move: ', data.move);
-			const coordinates = CoordinationPositionMapper.parseStringMoveToCells(data.move);
-			const target3DPosition = CoordinationPositionMapper.get3DPositionMove(coordinates);
-			console.log(coordinates);
-			const movingFigure = board.cells[coordinates.figureCell.row][coordinates.figureCell.col];
-			dispatch(setCurrentFigureCell(movingFigure));
-			dispatch(setNewPos(target3DPosition));
-			debounce(() => {
-				if (data.move.length == 6) {
-					const promotionFigureName = FigureMapper.mapPromotionFigure(data.move[5]);
-					dispatch(completeMove({ coordinates, promotionFigureName }));
-				} else {
-					dispatch(completeMove({ coordinates }));
-				}
-				// dispatch(setNewPos(null));
-			}, 1000);
-		}
-	};
+	const { cellSize } = useResponsiveBoardValues();
 
-	console.log('making stablishment');
+	const handleMoveMessage = useCallback(
+		(data: SocketMoveMessage) => {
+			if (board) {
+				const coordinates = CoordinationPositionMapper.parseStringMoveToCells(data.move);
+				const target3DPosition = CoordinationPositionMapper.get3DPositionMove(coordinates, cellSize);
+				console.log(coordinates);
+				const movingFigure = board.cells[coordinates.figureCell.row][coordinates.figureCell.col];
+				dispatch(setCurrentFigureCell(movingFigure));
+				dispatch(setNewPos(target3DPosition));
+				debounce(() => {
+					if (data.move.length === 6) {
+						const promotionFigureName = FigureMapper.mapPromotionFigure(data.move[5]);
+						dispatch(completeMove({ coordinates, promotionFigureName }));
+					} else {
+						dispatch(completeMove({ coordinates }));
+					}
+				}, 1000);
+			}
+		},
+		[board, cellSize, dispatch]
+	);
 
 	useEffect(() => {
 		playerConnectionService.connect(

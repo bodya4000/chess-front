@@ -1,10 +1,13 @@
 {
+	"homepage": "https://bodya4000.github.io/chess-front",
 	"name": "project-chess",
-	"private": true,
-	"version": "0.0.0",
+	"private": false,
+	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
+		"predeploy": "yarn build",
+		"deploy": "gh-pages -d dist",
 		"build": "tsc -b && vite build",
 		"lint": "eslint .",
 		"preview": "vite preview",

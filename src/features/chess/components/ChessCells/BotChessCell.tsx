@@ -9,6 +9,7 @@ import ChessLogic from '../../utils/ChessLogic';
 import { debounce } from '../../utils/Functions';
 import DefaultChessCell from './DefaultChessCell';
 import { OpponentMoveInfo } from '../../types/OpponentMoveInfo'
+import useResponsiveBoardValues from '../../hooks/useResponsiveBoardValues'
 
 interface ChessCellProps {
 	cell: CellView;
@@ -20,9 +21,10 @@ const BotChessCell: FC<ChessCellProps> = ({ cell, highlighted, position }) => {
 	const dispatch = useAppDispatch();
 	const { userColor } = useBotChessBoard();
 	const { turn, currentFigureCell } = useChessGame();
+	const { cellSize } = useResponsiveBoardValues();
 
 	const move = () => {
-		ChessLogic.handleUIStateForFigureMove(highlighted, currentFigureCell, cell, dispatch);
+		ChessLogic.handleUIStateForFigureMove(highlighted, currentFigureCell, cell, dispatch,cellSize);
 		debounce(() => {
 			dispatch(getBotMove()).then(result => result.payload && debounce(() => dispatch(completeMove(result.payload as OpponentMoveInfo))));
 		});
