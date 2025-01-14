@@ -1,4 +1,3 @@
-import { OrbitControls } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import deepEqual from 'fast-deep-equal';
 import { FC, memo, ReactNode } from 'react';
@@ -28,7 +27,6 @@ const ChessCanvas: FC<ChessCanvasProps> = memo(
 							{mode == ChessModes.DEMO && <DemoCamera />}
 							{mode != ChessModes.DEMO && <GameCamera />}
 							{children}
-
 						</Canvas>
 					</div>
 				</div>

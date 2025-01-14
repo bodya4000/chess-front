@@ -26,7 +26,7 @@ const BotChessCell: FC<ChessCellProps> = ({ cell, highlighted, position }) => {
 	const move = () => {
 		ChessLogic.handleUIStateForFigureMove(highlighted, currentFigureCell, cell, dispatch,cellSize);
 		debounce(() => {
-			dispatch(getBotMove()).then(result => result.payload && debounce(() => dispatch(completeMove(result.payload as OpponentMoveInfo))));
+			dispatch(getBotMove(cellSize)).then(result => result.payload && debounce(() => dispatch(completeMove(result.payload as OpponentMoveInfo))));
 		});
 	};
 
